@@ -37,6 +37,11 @@
 #include <thread>
 
 #include <marble/MarbleWidget.h>
+#include <marble/GeoDataDocument.h>
+#include <marble/GeoDataPlacemark.h>
+#include <marble/GeoDataLineString.h>
+#include <marble/GeoDataTreeModel.h>
+#include <marble/MarbleModel.h>
 
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -68,8 +73,11 @@ class MARBLE_vis : public QMainWindow {
         void CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg);
 
     private:
-        Ui::UAV_gui *ui;
+        Ui::MARBLE_vis *ui;
         Marble::MarbleWidget *mapWidget_;
+
+        Marble::GeoDataPlacemark *place_;
+        Marble::GeoDataDocument *document_;
 
         ros::Subscriber poseSub_;
 
@@ -78,6 +86,8 @@ class MARBLE_vis : public QMainWindow {
         
         std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;	
 
+        int cont_ = 0;
+        float lon_ = 0, lat_ = 0, alt_ = 0;
         bool stopAll_ = false;
         float poseUAVx_ = 0, poseUAVy_ = 0, poseUAVz_ = 0;
         float poseUAVox_ = 0, poseUAVoy_ = 0, poseUAVoz_ = 0, poseUAVow_ = 0;

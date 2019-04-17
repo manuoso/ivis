@@ -126,17 +126,13 @@ endif(${catkin_FOUND})
 ######		   	Tools 		   	   ######
 #########################################
 
-if(${BUILD_TOOLS})
-	add_subdirectory(tools)
-endif(${BUILD_TOOLS})
+add_subdirectory(tools)
 
 #########################################
 ######			Examples 		   ######
 #########################################
 
-# if(${BUILD_EXAMPLES})
-# 	add_subdirectory(examples)
-# endif(${BUILD_EXAMPLES})
+# add_subdirectory(examples)
 
 #########################################
 ######			INSTALL 		   ######

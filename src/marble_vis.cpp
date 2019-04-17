@@ -46,6 +46,19 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         std::string nameCallbackPose = "";
         poseSub_ = nh.subscribe(nameCallbackPose, 1, &MARBLE_vis::CallbackPose, this);
 
+        place_ = new Marble::GeoDataPlacemark("Pose");
+        // place_->setCoordinate(lon_, lat_, alt_, Marble::GeoDataCoordinates::Degree);
+        place_->setCoordinate(-6.003450, 37.412269, alt_, Marble::GeoDataCoordinates::Degree);
+
+        document_ = new Marble::GeoDataDocument;
+        document_->append(place_);
+
+        // Add the document to MarbleWidget's tree model
+        mapWidget_->model()->treeModel()->addDocument(document_);
+
+        mapWidget_->centerOn(Marble::GeoDataCoordinates(-6.003450, 37.412269, alt_, Marble::GeoDataCoordinates::Degree));
+	    mapWidget_->zoomView(4000);
+
         lastTimePose_ = std::chrono::high_resolution_clock::now();
 
         poseThread_ = new std::thread([&]{
@@ -57,7 +70,6 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
                 }
             }
         });
-
 
     }
 
@@ -71,7 +83,7 @@ MARBLE_vis::~MARBLE_vis(){
 //---------------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------------
-void UAV_gui::updatePose(){
+void MARBLE_vis::updatePose(){
     objectLockPose_.lock();
     ui->lineEdit_p1->setText(QString::number(poseUAVx_));
     ui->lineEdit_p2->setText(QString::number(poseUAVy_));
@@ -82,10 +94,20 @@ void UAV_gui::updatePose(){
     ui->lineEdit_p6->setText(QString::number(poseUAVoz_));
     ui->lineEdit_p7->setText(QString::number(poseUAVow_));
     objectLockPose_.unlock();
+    
+    cont_++;
+    if(cont_ > 10){
+        place_->setCoordinate(-6.002994, 37.411008, alt_, Marble::GeoDataCoordinates::Degree);
+
+        // Add the document to MarbleWidget's tree model
+        mapWidget_->model()->treeModel()->updateFeature(place_);
+    }
+
+
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void UAV_gui::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg){
+void MARBLE_vis::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg){
     objectLockPose_.lock();
     poseUAVx_ = _msg->pose.position.x;
     poseUAVy_ = _msg->pose.position.y;
