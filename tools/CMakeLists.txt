@@ -34,6 +34,7 @@ if(${catkin_FOUND})
 		target_link_libraries(${tool_name} LINK_PUBLIC ${catkin_LIBRARIES})
 	endmacro()
 	build_ros_tool(vis_marble vis_marble/main.cpp)
+	build_ros_tool(gui_pcl gui_pcl/main.cpp)
 endif(${catkin_FOUND})
 
 # Macro for tool without using ROS components

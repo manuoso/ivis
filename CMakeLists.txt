@@ -38,21 +38,28 @@ list(APPEND IVIS_DEFINITIONS "")
 set(IVIS_COMPILE_OPTIONS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} -Wall -g -O0")
 
 #########################################
+## Load Eigen
+find_package(Eigen3 REQUIRED)
+if(${Eigen3_FOUND})
+	MESSAGE( STATUS "Eigen FOUND")
+endif()
+
+#########################################
 ## Load PCL
-# find_package(PCL QUIET REQUIRED)
-# if(${PCL_FOUND})
-# 	MESSAGE( STATUS "Adding properly PCL and its dependencies")
-# 	add_definitions(-DENABLE_PCL)
-# 	add_definitions(${PCL_DEFINITIONS})
-# 	list(APPEND IVIS_DEFINITIONS "IVIS_USE_PCL")
-# 	if(${PCL_VERSION} VERSION_GREATER 1.9)
-# 		list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_9")
-# 	else()
-# 		list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_8")
-# 	endif()
-# else()
-# 	MESSAGE( FATAL_ERROR "Couldnt Add PCL and/or it's dependencies")
-# endif()
+find_package(PCL QUIET REQUIRED)
+if(${PCL_FOUND})
+	MESSAGE( STATUS "Adding properly PCL and its dependencies")
+	add_definitions(-DENABLE_PCL)
+	add_definitions(${PCL_DEFINITIONS})
+	list(APPEND IVIS_DEFINITIONS "IVIS_USE_PCL")
+	if(${PCL_VERSION} VERSION_GREATER 1.9)
+		list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_9")
+	else()
+		list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_8")
+	endif()
+else()
+	MESSAGE( FATAL_ERROR "Couldnt Add PCL and/or it's dependencies")
+endif()
 
 #########################################
 ## Load Marble
