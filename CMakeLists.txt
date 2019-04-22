@@ -83,12 +83,13 @@ set(CMAKE_AUTOUIC ON)
 #########################################
 # catking
 find_package(catkin REQUIRED 
-											roscpp 
-											geometry_msgs)
+								roscpp 
+								geometry_msgs
+								sensor_msgs)
 
 if(${catkin_FOUND})
 	catkin_package(
-		CATKIN_DEPENDS roscpp geometry_msgs
+		CATKIN_DEPENDS roscpp geometry_msgs sensor_msgs
 		INCLUDE_DIRS include
 	)
 	list(APPEND IVIS_DEFINITIONS "IVIS_USE_ROS")

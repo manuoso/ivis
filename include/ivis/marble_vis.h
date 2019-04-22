@@ -44,7 +44,7 @@
 #include <marble/MarbleModel.h>
 
 #include <ros/ros.h>
-#include <geometry_msgs/PoseStamped.h>
+#include <sensor_msgs/NavSatFix.h>
 
 namespace Ui{
     class MARBLE_vis;
@@ -70,7 +70,7 @@ class MARBLE_vis : public QMainWindow {
     
         /// Method for visualize a change of pose from a topic of ROS
         /// \param _msg: data receive to update pose
-        void CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg);
+        void CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg);
 
     private:
         Ui::MARBLE_vis *ui;
@@ -87,10 +87,8 @@ class MARBLE_vis : public QMainWindow {
         std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;	
 
         int cont_ = 0;
-        float lon_ = 0, lat_ = 0, alt_ = 0;
         bool stopAll_ = false;
-        float poseUAVx_ = 0, poseUAVy_ = 0, poseUAVz_ = 0;
-        float poseUAVox_ = 0, poseUAVoy_ = 0, poseUAVoz_ = 0, poseUAVow_ = 0;
+        float latGPS_ = 0, lonGPS_ = 0, altGPS_ = 0;
         
 };
 
