@@ -24,24 +24,17 @@
 
 #include <ros/ros.h>
 
-int main(int _argc, char** _argv) {
-	
-    if (_argc != 2) {
-        std::cout << "Bad input arguments, please provide only the path of a json config file with the structure detailed in the documentation" << std::endl;
-        return -1;
-    }
+int main(int _argc, char **_argv)
+{
 
-    #ifdef MGUI_USE_ROS
-        ros::init(_argc, _argv, "pclgui");
-        ros::AsyncSpinner rosSpinner(4);
-        rosSpinner.start();
-    #endif
-    
+    ros::init(_argc, _argv, "pclgui");
+    ros::AsyncSpinner rosSpinner(4);
+    rosSpinner.start();
+
     QApplication a(_argc, _argv);
 
     PCLViewer_gui gui;
     gui.show();
-    
+
     return a.exec();
 }
-

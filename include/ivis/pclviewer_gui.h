@@ -37,6 +37,7 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/io/vtk_lib_io.h>
 #include <pcl/point_cloud.h>
+#include <pcl_ros/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -44,15 +45,19 @@
 #include <pcl/filters/voxel_grid.h>
 
 #include <vtkRenderWindow.h>
+#include <boost/foreach.hpp>
 
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Point.h>
+
 
 typedef pcl::PointXYZ PointT1;
 typedef pcl::PointCloud<PointT1> PointCloudT1;
 
 typedef pcl::PointXYZRGB PointT2;
 typedef pcl::PointCloud<PointT2> PointCloudT2;
+
 
 namespace Ui{
     class PCLViewer_gui;
@@ -79,7 +84,13 @@ private:
     /// Method for visualize a change of pose from a topic of ROS
     /// \param _msg: data receive to update pose
     void CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg);
-    
+
+    /// Method that receive new points for the point cloud
+    void CallbackPointcloud(const geometry_msgs::Point::ConstPtr& _msg);
+
+    /// Method that receive a pointcloud from a bridge
+    void CallbackBridge(const PointCloudT1::ConstPtr& _msg);
+
     /// Method that update a UAV object in PCL GUI visualizer
     void updateObjectUAV();   
 
@@ -97,11 +108,24 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;
     
     ros::Subscriber poseSub_;
+    ros::Subscriber pointcloudSub_;
+    ros::Subscriber bridgeSub_;
 
     std::string typePoint_ = "";
     std::string nameCallbackPose_ = "";
+    std::string nameCallbackPointcloud_ ="";
+    std::string nameCallbackBridge_ ="";
     std::string typeModelPose_ = "";
     std::string pathModelPose_ = "";
+
+    PointT2 newPointRGB_, UavPointRGB_, line_vector_[3];
+    double radSphere_=0.1;
+    std::string idSphere_ = "";
+    std::string idUavSphere_ = "";
+    std::string idBridge_ = "";
+    std::string UavIdLine_ = "";
+    int ContSpheres_=0, UavSpheres_=0, ContBridge_=0;
+    bool FirstTime_=true;
  
     float poseX_ = 0.0, poseY_ = 0.0, poseZ_ = 0.0, poseOX_ = 0.0, poseOY_ = 0.0, poseOZ_ = 0.0, poseOW_ = 1.0;
 
