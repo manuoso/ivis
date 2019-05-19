@@ -47,7 +47,6 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
-<<<<<<< HEAD
 
 #include <ivis/configMission.h>
 
@@ -56,8 +55,6 @@
 #define RAD_DEG(RAD) ((RAD) * (180.0) / (CONST_PI))
 
 using namespace Marble;
-=======
->>>>>>> master
 
 namespace Ui{
     class MARBLE_vis;
@@ -116,7 +113,6 @@ class MARBLE_vis : public QMainWindow {
         
         std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;	
 
-<<<<<<< HEAD
         bool stopAll_ = false;
 
         int nGPS_ = 0;
@@ -125,11 +121,6 @@ class MARBLE_vis : public QMainWindow {
 
         int idWP_ = 0;
         std::vector<std::pair<int, std::vector<double>>> waypoints_;
-=======
-        int cont_ = 0;
-        bool stopAll_ = false;
-        float latGPS_ = 0, lonGPS_ = 0, altGPS_ = 0;
->>>>>>> master
         
 };
 

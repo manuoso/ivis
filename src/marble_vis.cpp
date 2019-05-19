@@ -52,7 +52,6 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         connect(mapWidget_, SIGNAL(mouseClickGeoPosition(qreal,qreal,GeoDataCoordinates::Unit)), this, SLOT(clickMouse(qreal,qreal,GeoDataCoordinates::Unit)));
 
         ros::NodeHandle nh;
-<<<<<<< HEAD
         poseSub_ = nh.subscribe("/dji_telem/pos_gps", 1, &MARBLE_vis::CallbackPose, this);
         configMissionReq_ = nh.serviceClient<ivis::configMission>("/gui_marble/waypoints");
 
@@ -60,13 +59,6 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         // place_->setCoordinate(lon_, lat_, alt_, Marble::GeoDataCoordinates::Degree);
         // place_->setCoordinate(-6.003450, 37.412269, 0, Marble::GeoDataCoordinates::Degree);
         place_->setCoordinate(0, 0, 0, Marble::GeoDataCoordinates::Degree);
-=======
-        std::string nameCallbackPose = "/dji/gps_pos";
-        poseSub_ = nh.subscribe(nameCallbackPose, 1, &MARBLE_vis::CallbackPose, this);
-
-        place_ = new Marble::GeoDataPlacemark("Pose");
-        place_->setCoordinate(lonGPS_, latGPS_, altGPS_, Marble::GeoDataCoordinates::Degree);
->>>>>>> master
 
         document_ = new Marble::GeoDataDocument;
         document_->append(place_);
@@ -74,11 +66,6 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         // Add the document to MarbleWidget's tree model
         mapWidget_->model()->treeModel()->addDocument(document_);
 
-<<<<<<< HEAD
-=======
-	    // mapWidget_->zoomView(4000);
-
->>>>>>> master
         lastTimePose_ = std::chrono::high_resolution_clock::now();
 
         poseThread_ = new std::thread([&]{
@@ -117,7 +104,6 @@ void MARBLE_vis::clickMouse(qreal _lon, qreal _lat, GeoDataCoordinates::Unit _un
 void MARBLE_vis::centerUAV(){
 
     objectLockPose_.lock();
-<<<<<<< HEAD
     mapWidget_->centerOn(Marble::GeoDataCoordinates(lonUAV_, latUAV_, altUAV_, Marble::GeoDataCoordinates::Degree));
     mapWidget_->zoomView(4000);
     objectLockPose_.unlock();
@@ -197,34 +183,15 @@ void MARBLE_vis::updatePose(){
 
     // Update the document MarbleWidget's tree model
     mapWidget_->model()->treeModel()->updateFeature(place_);
-=======
-    ui->lineEdit_p1->setText(QString::number(latGPS_));
-    ui->lineEdit_p2->setText(QString::number(lonGPS_));
-    ui->lineEdit_p3->setText(QString::number(altGPS_));
-
-    place_->setCoordinate(lonGPS_, latGPS_, altGPS_, Marble::GeoDataCoordinates::Degree);
-
-    // Add the document to MarbleWidget's tree model
-    mapWidget_->model()->treeModel()->updateFeature(place_);
-
-    objectLockPose_.unlock();
->>>>>>> master
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 void MARBLE_vis::CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg){
     objectLockPose_.lock();
-<<<<<<< HEAD
     nGPS_ = _msg->status.status;
     latUAV_ = _msg->latitude;
     lonUAV_ = _msg->longitude;
     altUAV_ = _msg->altitude;
-=======
-    latGPS_ = _msg->latitude;
-    lonGPS_ = _msg->longitude;
-    altGPS_ = _msg->altitude;
-
->>>>>>> master
     objectLockPose_.unlock();
 }

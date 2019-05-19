@@ -117,10 +117,6 @@ endif(${catkin_FOUND})
 file(GLOB_RECURSE IVIS_SOURCE_FILES "src/*.cpp" "src/*.c")
 file(GLOB_RECURSE IVIS_HEADER_FILES "include/ivis/*.h" "include/ivis/*.inl")
 
-add_executable(fake_pub src/fake_pub.cpp)
-target_link_libraries(fake_pub ${catkin_LIBRARIES})
-
-
 add_library(${PROJECT_NAME} SHARED ${IVIS_HEADER_FILES} ${IVIS_SOURCE_FILES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include) 
