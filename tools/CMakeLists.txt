@@ -35,6 +35,8 @@ if(${catkin_FOUND})
 	endmacro()
 	build_ros_tool(vis_marble vis_marble/main.cpp)
 	build_ros_tool(gui_pcl gui_pcl/main.cpp)
+	build_ros_tool(read_pointcloud read_pointcloud/main.cpp)
+	build_ros_tool(subscriber subscriber/main.cpp)
 endif(${catkin_FOUND})
 
 # Macro for tool without using ROS components

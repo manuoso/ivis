@@ -33,6 +33,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>geometry_msgs</build_depend>
+<<<<<<< HEAD
   <build_depend>std_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>message_generation</build_depend>
@@ -43,6 +44,11 @@
   <run_depend>message_runtime</run_depend>
   <run_depend>std_srvs</run_depend>
   <run_depend>message_runtime</run_depend>
+=======
+  <build_depend>sensor_msgs</build_depend>
+
+  <run_depend>sensor_msgs</run_depend>
+>>>>>>> master
   <run_depend>geometry_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
