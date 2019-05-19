@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MARBLE_vis</string>
+   <string>Marble Map</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
@@ -34,21 +34,8 @@
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="maximumSize">
-               <size>
-                <width>110</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Pose</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QLineEdit" name="lineEdit_p4">
+            <item row="9" column="1">
+             <widget class="QLineEdit" name="lineEdit_c1">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -57,40 +44,36 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
-             <widget class="QLineEdit" name="lineEdit_p5">
+            <item row="13" column="0" colspan="2">
+             <widget class="QScrollArea" name="scrollArea_2">
               <property name="maximumSize">
                <size>
-                <width>100</width>
-                <height>30</height>
+                <width>16777215</width>
+                <height>300</height>
                </size>
               </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLineEdit" name="lineEdit_p3">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
+              <property name="widgetResizable">
+               <bool>true</bool>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="2" rowspan="10">
-             <layout class="QHBoxLayout" name="horizontalLayout"/>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>OY:</string>
-              </property>
+              <widget class="QWidget" name="scrollAreaWidgetContents_2">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>184</width>
+                 <height>298</height>
+                </rect>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_6">
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout_5">
+                  <item row="0" column="0">
+                   <widget class="QListWidget" name="listWidget_WayPoints"/>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
              </widget>
             </item>
             <item row="1" column="0">
@@ -104,13 +87,52 @@
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>40</height>
+                <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label">
+            <item row="14" column="0">
+             <widget class="QPushButton" name="deleteWP">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="1">
+             <widget class="QLineEdit" name="lineEdit_type">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>waypoint</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>UAV Pose</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_23">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -118,25 +140,25 @@
                </size>
               </property>
               <property name="text">
-               <string>OX:</string>
+               <string>Alt:</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_21">
+            <item row="2" column="1">
+             <widget class="QPushButton" name="center">
               <property name="maximumSize">
                <size>
-                <width>50</width>
+                <width>100</width>
                 <height>30</height>
                </size>
               </property>
               <property name="text">
-               <string>X:</string>
+               <string>Center on</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="lineEdit_p2">
+            <item row="10" column="1">
+             <widget class="QLineEdit" name="lineEdit_c2">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -145,16 +167,26 @@
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_3">
+            <item row="6" column="1">
+             <widget class="QLineEdit" name="lineEdit_ngps">
               <property name="maximumSize">
                <size>
-                <width>50</width>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
                 <height>30</height>
                </size>
               </property>
               <property name="text">
-               <string>OZ:</string>
+               <string>Num GPS:</string>
               </property>
              </widget>
             </item>
@@ -168,8 +200,50 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_4">
+            <item row="11" column="0">
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="14" column="1">
+             <widget class="QCommandLinkButton" name="sendWP">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Send</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>List WP:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_3">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -177,7 +251,7 @@
                </size>
               </property>
               <property name="text">
-               <string>OW:</string>
+               <string>Lon:</string>
               </property>
              </widget>
             </item>
@@ -190,12 +264,12 @@
                </size>
               </property>
               <property name="text">
-               <string>Y:</string>
+               <string>Lon:</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_23">
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_2">
               <property name="maximumSize">
                <size>
                 <width>50</width>
@@ -203,12 +277,54 @@
                </size>
               </property>
               <property name="text">
-               <string>Z:</string>
+               <string>Lat:</string>
               </property>
              </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="label">
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Clicked</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item row="8" column="1">
-             <widget class="QLineEdit" name="lineEdit_p6">
+             <widget class="QPushButton" name="addPoint">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Add</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="lineEdit_p3">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -217,8 +333,8 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
-             <widget class="QLineEdit" name="lineEdit_p7">
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="lineEdit_p2">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -226,6 +342,38 @@
                </size>
               </property>
              </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_21">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Lat:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="0">
+             <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="2" rowspan="15">
+             <layout class="QHBoxLayout" name="horizontalLayout"/>
             </item>
            </layout>
           </item>

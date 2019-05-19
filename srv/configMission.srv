@@ -1,0 +1,4 @@
+string type
+geometry_msgs/PoseStamped[] poseWP
+---
+bool success

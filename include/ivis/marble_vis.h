@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <mutex>
 #include <thread>
+#include <cmath>
 
 #include <marble/MarbleWidget.h>
 #include <marble/GeoDataDocument.h>
@@ -42,9 +43,18 @@
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataTreeModel.h>
 #include <marble/MarbleModel.h>
+#include <marble/GeoDataCoordinates.h>
 
 #include <ros/ros.h>
-#include <geometry_msgs/PoseStamped.h>
+#include <sensor_msgs/NavSatFix.h>
+
+#include <ivis/configMission.h>
+
+#define CONST_PI (double)3.141592653589793
+#define DEG_RAD(DEG) ((DEG) * ((CONST_PI) / (180.0)))
+#define RAD_DEG(RAD) ((RAD) * (180.0) / (CONST_PI))
+
+using namespace Marble;
 
 namespace Ui{
     class MARBLE_vis;
@@ -64,33 +74,53 @@ class MARBLE_vis : public QMainWindow {
         /// Signal that warns that there is a change in the pose of the uav
         void positionChanged();
 
+    private slots:
+        /// Method that takes the latitude and longitude coordinates of a mouse click
+        void clickMouse(qreal _lon, qreal _lat, GeoDataCoordinates::Unit _unit);
+
+        /// Method that focus on the current position of the UAV
+        void centerUAV();
+
+        /// Method that add the last point clicked to the waypoint list
+        void addPointList();
+
+        /// Method that deletes the selected waypoint from the waypoints list
+        void deleteWaypointList();
+
+        /// Method that sends the list of waypoints through a service of ROS
+        void sendWaypointList();
+
     private:
-        /// Method that update local position of the UAV
+        /// Method that notify the position of the local position of the UAV
         void updatePose();
     
         /// Method for visualize a change of pose from a topic of ROS
         /// \param _msg: data receive to update pose
-        void CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg);
+        void CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg);
 
     private:
         Ui::MARBLE_vis *ui;
         Marble::MarbleWidget *mapWidget_;
 
-        Marble::GeoDataPlacemark *place_;
+        Marble::GeoDataPlacemark *place_, *mission_;
         Marble::GeoDataDocument *document_;
 
         ros::Subscriber poseSub_;
+        ros::ServiceClient configMissionReq_;
 
         std::thread *poseThread_;
         std::mutex objectLockPose_;
         
         std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;	
 
-        int cont_ = 0;
-        float lon_ = 0, lat_ = 0, alt_ = 0;
         bool stopAll_ = false;
-        float poseUAVx_ = 0, poseUAVy_ = 0, poseUAVz_ = 0;
-        float poseUAVox_ = 0, poseUAVoy_ = 0, poseUAVoz_ = 0, poseUAVow_ = 0;
+
+        int nGPS_ = 0;
+        double latUAV_ = 0, lonUAV_ = 0, altUAV_ = 0;
+        double lastLatClicked = 0, lastLonClicked = 0;
+
+        int idWP_ = 0;
+        std::vector<std::pair<int, std::vector<double>>> waypoints_;
         
 };
 

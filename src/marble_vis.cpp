@@ -22,6 +22,8 @@
 #include <ivis/marble_vis.h>
 #include <ui_marble_vis.h>
 
+using namespace Marble;
+
 //---------------------------------------------------------------------------------------------------------------------
 // PUBLIC 
 //---------------------------------------------------------------------------------------------------------------------
@@ -33,6 +35,10 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
 
         ui->setupUi(this);
 
+        connect(ui->center, SIGNAL(clicked()), this, SLOT(centerUAV()));
+        connect(ui->addPoint, SIGNAL(clicked()), this, SLOT(addPointList()));
+        connect(ui->deleteWP, SIGNAL(clicked()), this, SLOT(deleteWaypointList()));
+        connect(ui->sendWP, SIGNAL(clicked()), this, SLOT(sendWaypointList()));
         connect(this, &MARBLE_vis::positionChanged , this, &MARBLE_vis::updatePose);
 
         mapWidget_= new Marble::MarbleWidget();
@@ -42,22 +48,23 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
 
         ui->horizontalLayout->addWidget(mapWidget_);
 
+        // Connect the map widget to the position label
+        connect(mapWidget_, SIGNAL(mouseClickGeoPosition(qreal,qreal,GeoDataCoordinates::Unit)), this, SLOT(clickMouse(qreal,qreal,GeoDataCoordinates::Unit)));
+
         ros::NodeHandle nh;
-        std::string nameCallbackPose = "";
-        poseSub_ = nh.subscribe(nameCallbackPose, 1, &MARBLE_vis::CallbackPose, this);
+        poseSub_ = nh.subscribe("/dji_telem/pos_gps", 1, &MARBLE_vis::CallbackPose, this);
+        configMissionReq_ = nh.serviceClient<ivis::configMission>("/gui_marble/waypoints");
 
         place_ = new Marble::GeoDataPlacemark("Pose");
         // place_->setCoordinate(lon_, lat_, alt_, Marble::GeoDataCoordinates::Degree);
-        place_->setCoordinate(-6.003450, 37.412269, alt_, Marble::GeoDataCoordinates::Degree);
+        // place_->setCoordinate(-6.003450, 37.412269, 0, Marble::GeoDataCoordinates::Degree);
+        place_->setCoordinate(0, 0, 0, Marble::GeoDataCoordinates::Degree);
 
         document_ = new Marble::GeoDataDocument;
         document_->append(place_);
 
         // Add the document to MarbleWidget's tree model
         mapWidget_->model()->treeModel()->addDocument(document_);
-
-        mapWidget_->centerOn(Marble::GeoDataCoordinates(-6.003450, 37.412269, alt_, Marble::GeoDataCoordinates::Degree));
-	    mapWidget_->zoomView(4000);
 
         lastTimePose_ = std::chrono::high_resolution_clock::now();
 
@@ -79,43 +86,112 @@ MARBLE_vis::~MARBLE_vis(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+// PRIVATE SLOTS
+//---------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::clickMouse(qreal _lon, qreal _lat, GeoDataCoordinates::Unit _unit){
+
+    lastLonClicked = RAD_DEG(_lon);
+    lastLatClicked = RAD_DEG(_lat);
+
+    ui->lineEdit_c1->setText(QString::number(lastLatClicked));
+    ui->lineEdit_c2->setText(QString::number(lastLonClicked));
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::centerUAV(){
+
+    objectLockPose_.lock();
+    mapWidget_->centerOn(Marble::GeoDataCoordinates(lonUAV_, latUAV_, altUAV_, Marble::GeoDataCoordinates::Degree));
+    mapWidget_->zoomView(4000);
+    objectLockPose_.unlock();
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::addPointList(){
+    
+    std::vector<double> point = {latUAV_, lonUAV_, altUAV_};
+    waypoints_.push_back(std::make_pair(idWP_, point));
+
+    std::string swaypoint = "ID: " + std::to_string(idWP_);
+    ui->listWidget_WayPoints->addItem(QString::fromStdString(swaypoint));
+
+    idWP_++;
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::deleteWaypointList(){
+    
+    QList<QListWidgetItem*> items = ui->listWidget_WayPoints->selectedItems();
+    foreach(QListWidgetItem * item, items){
+        int index = ui->listWidget_WayPoints->row(item);
+        waypoints_.erase(waypoints_.begin() + index); 
+        delete ui->listWidget_WayPoints->takeItem(ui->listWidget_WayPoints->row(item));
+    }
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::sendWaypointList(){
+    
+    QString qTypeMission;
+    qTypeMission = ui->lineEdit_type->text();
+    std::string typeMission = qTypeMission.toStdString();;
+    
+    ivis::configMission srvConfig;
+    srvConfig.request.type = typeMission;
+
+    for(unsigned i = 0; i < waypoints_.size(); i++){
+        geometry_msgs::PoseStamped wp;
+        wp.pose.position.x = waypoints_[i].second[0];
+        wp.pose.position.y = waypoints_[i].second[1];
+        wp.pose.position.z = waypoints_[i].second[2];
+        srvConfig.request.poseWP.push_back(wp);
+    }
+    
+    if(configMissionReq_.call(srvConfig)){
+        if(srvConfig.response.success){
+            std::cout << "Service of CONFIG MISSION success" << std::endl;
+        }else{
+            std::cout << "Service of CONFIG MISSION failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of CONFIG MISSION" << std::endl;
+    }
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 // PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------------
 void MARBLE_vis::updatePose(){
+
     objectLockPose_.lock();
-    ui->lineEdit_p1->setText(QString::number(poseUAVx_));
-    ui->lineEdit_p2->setText(QString::number(poseUAVy_));
-    ui->lineEdit_p3->setText(QString::number(poseUAVz_));
-
-    ui->lineEdit_p4->setText(QString::number(poseUAVox_));
-    ui->lineEdit_p5->setText(QString::number(poseUAVoy_));
-    ui->lineEdit_p6->setText(QString::number(poseUAVoz_));
-    ui->lineEdit_p7->setText(QString::number(poseUAVow_));
+    ui->lineEdit_p1->setText(QString::number(latUAV_));
+    ui->lineEdit_p2->setText(QString::number(lonUAV_));
+    ui->lineEdit_p3->setText(QString::number(altUAV_));
+    ui->lineEdit_ngps->setText(QString::number(nGPS_));
     objectLockPose_.unlock();
-    
-    cont_++;
-    if(cont_ > 10){
-        place_->setCoordinate(-6.002994, 37.411008, alt_, Marble::GeoDataCoordinates::Degree);
 
-        // Add the document to MarbleWidget's tree model
-        mapWidget_->model()->treeModel()->updateFeature(place_);
-    }
+    place_->setCoordinate(lonUAV_, latUAV_, altUAV_, Marble::GeoDataCoordinates::Degree);
 
+    // Update the document MarbleWidget's tree model
+    mapWidget_->model()->treeModel()->updateFeature(place_);
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void MARBLE_vis::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg){
+void MARBLE_vis::CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg){
     objectLockPose_.lock();
-    poseUAVx_ = _msg->pose.position.x;
-    poseUAVy_ = _msg->pose.position.y;
-    poseUAVz_ = _msg->pose.position.z;
-
-    poseUAVox_ = _msg->pose.orientation.x;
-    poseUAVoy_ = _msg->pose.orientation.y;
-    poseUAVoz_ = _msg->pose.orientation.z;
-    poseUAVow_ = _msg->pose.orientation.w;
+    nGPS_ = _msg->status.status;
+    latUAV_ = _msg->latitude;
+    lonUAV_ = _msg->longitude;
+    altUAV_ = _msg->altitude;
     objectLockPose_.unlock();
 }
