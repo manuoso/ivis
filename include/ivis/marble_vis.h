@@ -44,6 +44,9 @@
 #include <marble/GeoDataTreeModel.h>
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataCoordinates.h>
+#include <marble/GeoPainter.h>
+#include <marble/MarbleMap.h>
+#include <marble/LayerInterface.h>
 
 #include <ros/ros.h>
 #include <sensor_msgs/NavSatFix.h>
@@ -60,7 +63,7 @@ namespace Ui{
     class MARBLE_vis;
 }
 
-class MARBLE_vis : public QMainWindow {
+class MARBLE_vis : public QMainWindow, public LayerInterface{
     Q_OBJECT
 
     public:
@@ -69,6 +72,12 @@ class MARBLE_vis : public QMainWindow {
 
         /// Destructor
         ~MARBLE_vis();
+
+        /// Implemented from LayerInterface
+        virtual QStringList renderPosition() const;
+
+        /// Implemented from LayerInterface
+        virtual bool render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos = "NONE", GeoSceneLayer * layer = 0);
 
     signals:
         /// Signal that warns that there is a change in the pose of the uav
@@ -87,6 +96,9 @@ class MARBLE_vis : public QMainWindow {
         /// Method that deletes the selected waypoint from the waypoints list
         void deleteWaypointList();
 
+        /// Method that visualizes the mission on Marble map
+        void visualizeMissionList();
+
         /// Method that sends the list of waypoints through a service of ROS
         void sendWaypointList();
 
@@ -102,8 +114,10 @@ class MARBLE_vis : public QMainWindow {
         Ui::MARBLE_vis *ui;
         Marble::MarbleWidget *mapWidget_;
 
-        Marble::GeoDataPlacemark *place_, *mission_;
+        Marble::GeoDataPlacemark *place_, *currentClicked_;
+        std::vector<Marble::GeoDataPlacemark*> placeMission_;
         Marble::GeoDataDocument *document_;
+        std::vector<Marble::GeoDataDocument*> documentMission_;
 
         ros::Subscriber poseSub_;
         ros::ServiceClient configMissionReq_;
@@ -114,10 +128,13 @@ class MARBLE_vis : public QMainWindow {
         std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;	
 
         bool stopAll_ = false;
+        bool visualizeMission_ = false;
+
+        std::string typeMission_ = "";
 
         int nGPS_ = 0;
-        double latUAV_ = 0, lonUAV_ = 0, altUAV_ = 0;
-        double lastLatClicked = 0, lastLonClicked = 0;
+        double latUAV_ = 37.412269, lonUAV_ = -6.003450, altUAV_ = 0;
+        double lastLatClicked_ = 0, lastLonClicked_ = 0;
 
         int idWP_ = 0;
         std::vector<std::pair<int, std::vector<double>>> waypoints_;

@@ -35,9 +35,13 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
 
         ui->setupUi(this);
 
+        ui->checkBox_alt->setChecked(false);
+        ui->sendWP->setVisible(0);
+
         connect(ui->center, SIGNAL(clicked()), this, SLOT(centerUAV()));
         connect(ui->addPoint, SIGNAL(clicked()), this, SLOT(addPointList()));
         connect(ui->deleteWP, SIGNAL(clicked()), this, SLOT(deleteWaypointList()));
+        connect(ui->visualizeMission, SIGNAL(clicked()), this, SLOT(visualizeMissionList()));
         connect(ui->sendWP, SIGNAL(clicked()), this, SLOT(sendWaypointList()));
         connect(this, &MARBLE_vis::positionChanged , this, &MARBLE_vis::updatePose);
 
@@ -48,6 +52,8 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
 
         ui->horizontalLayout->addWidget(mapWidget_);
 
+        mapWidget_->addLayer(this);
+
         // Connect the map widget to the position label
         connect(mapWidget_, SIGNAL(mouseClickGeoPosition(qreal,qreal,GeoDataCoordinates::Unit)), this, SLOT(clickMouse(qreal,qreal,GeoDataCoordinates::Unit)));
 
@@ -55,12 +61,16 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         poseSub_ = nh.subscribe("/dji_telem/pos_gps", 1, &MARBLE_vis::CallbackPose, this);
         configMissionReq_ = nh.serviceClient<ivis::configMission>("/gui_marble/waypoints");
 
+        currentClicked_ = new Marble::GeoDataPlacemark("Clicked");
         place_ = new Marble::GeoDataPlacemark("Pose");
+
         // place_->setCoordinate(lon_, lat_, alt_, Marble::GeoDataCoordinates::Degree);
         // place_->setCoordinate(-6.003450, 37.412269, 0, Marble::GeoDataCoordinates::Degree);
+        currentClicked_->setCoordinate(0, 0, 0, Marble::GeoDataCoordinates::Degree);
         place_->setCoordinate(0, 0, 0, Marble::GeoDataCoordinates::Degree);
 
         document_ = new Marble::GeoDataDocument;
+        document_->append(currentClicked_);
         document_->append(place_);
 
         // Add the document to MarbleWidget's tree model
@@ -86,17 +96,86 @@ MARBLE_vis::~MARBLE_vis(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+QStringList MARBLE_vis::renderPosition() const{
+    return QStringList() << "SURFACE";
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool MARBLE_vis::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos, GeoSceneLayer * layer){
+    
+    if(visualizeMission_ && typeMission_ != ""){
+
+        if(typeMission_ == "waypoint"){
+            
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            painter->setBrush(QBrush(Qt::yellow));
+            painter->setPen(QPen(QBrush(Qt::green), 2.0, Qt::SolidLine, Qt::RoundCap));
+
+            GeoDataCoordinates *point, *nextPoint;
+
+            for(unsigned i = 0; i < waypoints_.size(); i++){
+                
+                if(i < (waypoints_.size()-1) ){
+                    
+                    point = new GeoDataCoordinates(waypoints_[i].second[1], waypoints_[i].second[0], waypoints_[i].second[2], GeoDataCoordinates::Degree);
+                    nextPoint = new GeoDataCoordinates(waypoints_[i+1].second[1], waypoints_[i+1].second[0], waypoints_[i+1].second[2], GeoDataCoordinates::Degree);
+
+                    GeoDataLineString lineNoTess(NoTessellation);
+                    lineNoTess << *point << *nextPoint;
+
+                    painter->drawPolyline(lineNoTess);
+                }
+            }
+
+            GeoDataCoordinates initPoint(waypoints_[0].second[1], waypoints_[0].second[0], waypoints_[0].second[2], GeoDataCoordinates::Degree);
+            GeoDataCoordinates finalPoint(waypoints_[waypoints_.size()-1].second[1], waypoints_[waypoints_.size()-1].second[0], waypoints_[waypoints_.size()-1].second[2], GeoDataCoordinates::Degree);
+            
+            GeoDataLineString lineNoTess(NoTessellation);
+            lineNoTess << finalPoint << initPoint;
+
+            // painter->setPen(oxygenForestGreen4);
+            painter->drawPolyline(lineNoTess);
+
+        }else if(typeMission_ == "hotpoint"){
+
+            GeoDataCoordinates hotpoint(waypoints_[0].second[1], waypoints_[0].second[0], waypoints_[0].second[2], GeoDataCoordinates::Degree);
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            painter->setBrush(QBrush(Qt::yellow));
+            painter->setPen(QPen(QBrush(Qt::green), 2.0, Qt::SolidLine, Qt::RoundCap));
+            // 666 TODO: RADIO REAL??
+            painter->drawEllipse(hotpoint, 100, 100);
+
+        }else{
+            std::cout << "Unrecognized TYPE of MISSION" << std::endl;
+        }
+        
+    }
+
+    // visualizeMission_ = false;
+
+    return true;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 // PRIVATE SLOTS
 //---------------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------------
 void MARBLE_vis::clickMouse(qreal _lon, qreal _lat, GeoDataCoordinates::Unit _unit){
 
-    lastLonClicked = RAD_DEG(_lon);
-    lastLatClicked = RAD_DEG(_lat);
+    lastLonClicked_ = RAD_DEG(_lon);
+    lastLatClicked_ = RAD_DEG(_lat);
 
-    ui->lineEdit_c1->setText(QString::number(lastLatClicked));
-    ui->lineEdit_c2->setText(QString::number(lastLonClicked));
+    ui->lineEdit_c1->setText(QString::number(lastLatClicked_));
+    ui->lineEdit_c2->setText(QString::number(lastLonClicked_));
+
+    
+    if(ui->checkBox_clicked->isChecked()){
+        currentClicked_->setCoordinate(lastLonClicked_, lastLatClicked_, 0, Marble::GeoDataCoordinates::Degree);
+
+        // Update the document MarbleWidget's tree model
+        mapWidget_->model()->treeModel()->updateFeature(currentClicked_);
+    }
 
 }
 
@@ -113,13 +192,64 @@ void MARBLE_vis::centerUAV(){
 //---------------------------------------------------------------------------------------------------------------------
 void MARBLE_vis::addPointList(){
     
-    std::vector<double> point = {latUAV_, lonUAV_, altUAV_};
-    waypoints_.push_back(std::make_pair(idWP_, point));
+    QString qTypeMission;
+    qTypeMission = ui->lineEdit_type->text();
+    std::string typeMission = qTypeMission.toStdString();;
 
-    std::string swaypoint = "ID: " + std::to_string(idWP_);
-    ui->listWidget_WayPoints->addItem(QString::fromStdString(swaypoint));
+    typeMission_ = typeMission;
 
-    idWP_++;
+    if(typeMission == "waypoint"){
+        std::string sPlace = "WP" + std::to_string(idWP_);
+        QString qPlace = QString::fromStdString(sPlace);
+        Marble::GeoDataPlacemark *place = new Marble::GeoDataPlacemark(qPlace);
+
+        if(ui->checkBox_alt->isChecked()){
+            place->setCoordinate(lastLonClicked_, lastLatClicked_, altUAV_, Marble::GeoDataCoordinates::Degree);
+
+            std::vector<double> point = {lastLatClicked_, lastLonClicked_, altUAV_};
+            waypoints_.push_back(std::make_pair(idWP_, point));
+        }else{
+            QString qAlt = ui->lineEdit_alt->text();
+            double alt = qAlt.toDouble(); 
+
+            place->setCoordinate(lastLonClicked_, lastLatClicked_, alt, Marble::GeoDataCoordinates::Degree);
+
+            std::vector<double> point = {lastLatClicked_, lastLonClicked_, alt};
+            waypoints_.push_back(std::make_pair(idWP_, point));
+        }
+        
+
+        placeMission_.push_back(place);
+        mapWidget_->model()->treeModel()->addFeature(document_, placeMission_[idWP_]);
+
+        std::string swaypoint = "ID: " + std::to_string(idWP_);
+        ui->listWidget_WayPoints->addItem(QString::fromStdString(swaypoint));
+
+        idWP_++;
+    }else if(typeMission == "hotpoint"){
+        std::string sPlace = "HP" + std::to_string(idWP_);
+        QString qPlace = QString::fromStdString(sPlace);
+        Marble::GeoDataPlacemark *place = new Marble::GeoDataPlacemark(qPlace);
+
+        QString qRad = ui->lineEdit_radius->text();
+        double rad = qRad.toDouble(); 
+
+        place->setCoordinate(lastLonClicked_, lastLatClicked_, rad, Marble::GeoDataCoordinates::Degree);
+
+        std::vector<double> point = {latUAV_, lonUAV_, rad};
+        waypoints_.push_back(std::make_pair(idWP_, point));
+        
+        placeMission_.push_back(place);
+        mapWidget_->model()->treeModel()->addFeature(document_, placeMission_[idWP_]);
+
+        std::string swaypoint = "ID: " + std::to_string(idWP_);
+        ui->listWidget_WayPoints->addItem(QString::fromStdString(swaypoint));
+
+        idWP_++;
+    }else{
+        std::cout << "Unrecognized TYPE of MISSION to add" << std::endl;
+    }
+    
 
 }
 
@@ -130,16 +260,25 @@ void MARBLE_vis::deleteWaypointList(){
     foreach(QListWidgetItem * item, items){
         int index = ui->listWidget_WayPoints->row(item);
         waypoints_.erase(waypoints_.begin() + index); 
+        mapWidget_->model()->treeModel()->removeFeature(placeMission_[index]);
         delete ui->listWidget_WayPoints->takeItem(ui->listWidget_WayPoints->row(item));
     }
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::visualizeMissionList(){
+    
+    visualizeMission_ = true;
+
+    ui->sendWP->setVisible(1);
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 void MARBLE_vis::sendWaypointList(){
     
-    QString qTypeMission;
-    qTypeMission = ui->lineEdit_type->text();
+    QString qTypeMission = ui->lineEdit_type->text();
     std::string typeMission = qTypeMission.toStdString();;
     
     ivis::configMission srvConfig;
