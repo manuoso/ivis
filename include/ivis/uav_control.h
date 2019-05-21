@@ -38,11 +38,12 @@
 #include <cmath>
 
 #include <ros/ros.h>
-#include <sensor_msgs/NavSatFix.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/TwistStamped.h>
+#include <std_msgs/String.h>
 #include <std_msgs/Float64MultiArray.h>
-#include <sensor_msgs/BatteryState.h>
+#include <geometry_msgs/TwistStamped.h>
+#include <sensor_msgs/NavSatFix.h> 
+#include <sensor_msgs/BatteryState.h> 
+#include <geometry_msgs/PoseStamped.h>
 
 #include <ivis/configMission.h>
 #include <std_srvs/SetBool.h>
@@ -55,7 +56,7 @@ namespace Ui{
     class UAV_control;
 }
 
-class UAV_control : public QMainWindow, public LayerInterface{
+class UAV_control : public QMainWindow{
     Q_OBJECT
 
     public:
@@ -74,29 +75,8 @@ class UAV_control : public QMainWindow, public LayerInterface{
         };
 
     signals:
-        /// Signal that warns that there is a change in the pose GPS of the uav
-        void positionGPSChanged();
-
-        /// Signal that warns that there is a change in the local pose of the uav
-        void positionLocalChanged();
-
-        /// Signal that warns that there is a change in the velocity of the uav
-        void velocityChanged();
-
-        /// Signal that warns that there is a change in the RC of the uav
-        void rcChanged();
-
-        /// Signal that warns that there is a change in the battey level of the uav
-        void batChanged();
-
-        /// Signal that warns that there is a change in the mode of the uav
-        void modeChanged();
-
-        /// Signal that warns that there is a change in the fly status of the uav
-        void flyStatusChanged();
-
-        /// Signal that warns that there is a change in the dji control status of the uav
-        void djiConStaChanged();
+        /// Signal that warns that there is a change in the Telemetry of the uav
+        void telemChanged();
 
     private slots:
         /// Method that send take off to the UAV
@@ -109,36 +89,24 @@ class UAV_control : public QMainWindow, public LayerInterface{
         void emergStopUAV();
 
         /// Method that send position to the UAV
-        void positionUAV();
+        void startPositionUAV();
+
+        /// Method that finish send position to the UAV
+        void stopPositionUAV();
 
         /// Method that send velocity to the UAV
-        void velocityUAV();
+        void startVelocityUAV();
+
+        /// Method that finish send velocity to the UAV
+        void stopVelocityUAV();
 
     private:
-        /// Method that notify that the position of GPS of the UAV have changed
-        void updatePoseGPS();
+        /// Send it by ROS Publishers
+        void sendThread();
 
-        /// Method that notify that the local position of the UAV have changed
-        void updatePoseLocal();
+        /// Method that notify that the Telemetry of the UAV have changed
+        void updateTelem();
 
-        /// Method that notify that the velocity of the UAV have changed
-        void updateVel();
-
-        /// Method that notify that the RC of the UAV have changed
-        void updateRC();
-
-        /// Method that notify that the battery level of the UAV have changed
-        void updateBat();
-
-        /// Method that notify that the mode of the UAV have changed
-        void updateMode();
-
-        /// Method that notify that the fly status of the UAV have changed
-        void updateFS();
-
-        /// Method that notify that dji control state of the UAV have changed
-        void updateDJICS();
-    
         /// Callback method for visualize a change of pose GPS from a topic of ROS
         /// \param _msg: data receive to update pose GPS
         void CallbackPoseGPS(const sensor_msgs::NavSatFix::ConstPtr& _msg);
@@ -178,7 +146,7 @@ class UAV_control : public QMainWindow, public LayerInterface{
         ros::Subscriber poseGPSSub_, poseLocalSub_, poseVelSub_, poseRCSub_, modeSub_, flyStatusSub_, nBatSub_, djiConStaSub_;
         ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_;
 
-        std::thread *sendThread_, *poseGPSThread_, *poseLocalThread_, *velThread_, *rcThread_, *batThread_, *modeThread_, *fsThread_, *djiConStaThread_;
+        std::thread *sendThread_, *telemThread_;
         std::mutex objectLockGPS_, objectLockLocal_, objectLockVel_, objectLockRC_, objectLockBat_, objectLockMode_, objectLockFS_, objectLockDJICS_;
         
         std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;	
@@ -187,12 +155,14 @@ class UAV_control : public QMainWindow, public LayerInterface{
         bool stopSend_ = false;
 
         xyz_data velocity_, position_;
+        geometry_msgs::TwistStamped msgVelocity_;
+        geometry_msgs::PoseStamped msgPosition_;
+
+        std::string type_ = "";
 
         std::string mode_ = "", flyStatus_ = "", djiConSta_ = ""; 
 
         float rc1_ = 0.0, rc2_ = 0.0, rc3_ = 0.0, rc4_ = 0.0;
-        float velX_ = 0.0, velY_ = 0.0, velZ_ = 0.0;
-        float poseLocalX_ = 0.0, poseLocalY_ = 0.0, poseLocalZ_ = 0.0;
         double poseGPSLat_ = 0.0, poseGPSLon_ = 0.0, poseGPSAlt_ = 0.0;
         
         float batLevel = 0.0;
