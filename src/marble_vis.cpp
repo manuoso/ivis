@@ -236,7 +236,7 @@ void MARBLE_vis::addPointList(){
 
         place->setCoordinate(lastLonClicked_, lastLatClicked_, rad, Marble::GeoDataCoordinates::Degree);
 
-        std::vector<double> point = {latUAV_, lonUAV_, rad};
+        std::vector<double> point = {lastLatClicked_, lastLonClicked_, rad};
         waypoints_.push_back(std::make_pair(idWP_, point));
         
         placeMission_.push_back(place);
