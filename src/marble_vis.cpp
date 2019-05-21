@@ -36,9 +36,12 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         ui->setupUi(this);
 
         ui->checkBox_alt->setChecked(false);
+        ui->checkBox_clicked->setChecked(false);
         ui->sendWP->setVisible(0);
         ui->startWP->setVisible(0);
         ui->stopWP->setVisible(0);
+        ui->pauseWP->setVisible(0);
+        ui->resumeWP->setVisible(0);
 
         connect(ui->center, SIGNAL(clicked()), this, SLOT(centerUAV()));
         connect(ui->addPoint, SIGNAL(clicked()), this, SLOT(addPointList()));
@@ -47,6 +50,8 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         connect(ui->sendWP, SIGNAL(clicked()), this, SLOT(sendWaypointList()));
         connect(ui->startWP, SIGNAL(clicked()), this, SLOT(startWaypointList()));
         connect(ui->stopWP, SIGNAL(clicked()), this, SLOT(stopWaypointList()));
+        connect(ui->pauseWP, SIGNAL(clicked()), this, SLOT(pauseWaypointList()));
+        connect(ui->resumeWP, SIGNAL(clicked()), this, SLOT(resumeWaypointList()));
         connect(this, &MARBLE_vis::positionChanged , this, &MARBLE_vis::updatePose);
 
         mapWidget_= new Marble::MarbleWidget();
@@ -67,6 +72,8 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         // configMissionReq_ = nh.serviceClient<ivis::configMission>("/gui_marble/waypoints");
         startMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/start_mission");
         stopMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/stop_mission");
+        pauseMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/pause_mission");
+        resumeMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/resume_mission");
 
         currentClicked_ = new Marble::GeoDataPlacemark("Clicked");
         place_ = new Marble::GeoDataPlacemark("Pose");
@@ -241,9 +248,14 @@ void MARBLE_vis::addPointList(){
         QString qRad = ui->lineEdit_radius->text();
         double rad = qRad.toDouble(); 
 
-        place->setCoordinate(lastLonClicked_, lastLatClicked_, rad, Marble::GeoDataCoordinates::Degree);
+        radiusHP_ = rad;
 
-        std::vector<double> point = {lastLatClicked_, lastLonClicked_, rad};
+        QString qAlt = ui->lineEdit_alt->text();
+        double alt = qAlt.toDouble();  
+
+        place->setCoordinate(lastLonClicked_, lastLatClicked_, alt, Marble::GeoDataCoordinates::Degree);
+
+        std::vector<double> point = {lastLatClicked_, lastLonClicked_, alt};
         waypoints_.push_back(std::make_pair(idWP_, point));
         
         placeMission_.push_back(place);
@@ -296,6 +308,7 @@ void MARBLE_vis::sendWaypointList(){
         wp.latitude = waypoints_[i].second[0];
         wp.longitude = waypoints_[i].second[1];
         wp.altitude = waypoints_[i].second[2];
+        wp.position_covariance[0] = radiusHP_;
         srvConfig.request.waypoint.push_back(wp);
     }
     
@@ -346,6 +359,42 @@ void MARBLE_vis::stopWaypointList(){
         }
     }else{
         std::cout << "Failed to call service of STOP MISSION" << std::endl;   
+    }
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::pauseWaypointList(){
+    
+    std_srvs::SetBool srv;
+    srv.request.data = true;
+
+    if(pauseMissionReq_.call(srv)){
+        if(srv.response.success){
+            std::cout << "Service of PAUSE MISSION success" << std::endl;
+        }else{
+            std::cout << "Service of PAUSE MISSION failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of PAUSE MISSION" << std::endl;   
+    }
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::resumeWaypointList(){
+    
+    std_srvs::SetBool srv;
+    srv.request.data = true;
+
+    if(resumeMissionReq_.call(srv)){
+        if(srv.response.success){
+            std::cout << "Service of RESUME MISSION success" << std::endl;
+        }else{
+            std::cout << "Service of RESUME MISSION failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of RESUME MISSION" << std::endl;   
     }
 
 }

@@ -109,6 +109,12 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         /// Method that stops the list of waypoints sended through a service of ROS
         void stopWaypointList();
 
+        /// Method that pause the list of waypoints sended through a service of ROS
+        void pauseWaypointList();
+
+        /// Method that resume the list of waypoints sended through a service of ROS
+        void resumeWaypointList();
+
     private:
         /// Method that notify the position of the local position of the UAV
         void updatePose();
@@ -127,7 +133,7 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         std::vector<Marble::GeoDataDocument*> documentMission_;
 
         ros::Subscriber poseSub_;
-        ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_;
+        ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_, pauseMissionReq_, resumeMissionReq_;
 
         std::thread *poseThread_;
         std::mutex objectLockPose_;
@@ -145,6 +151,7 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 
         int idWP_ = 0;
         std::vector<std::pair<int, std::vector<double>>> waypoints_;
+        float radiusHP_ = 0.0;
         
 };
 
