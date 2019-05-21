@@ -52,6 +52,7 @@
 #include <sensor_msgs/NavSatFix.h>
 
 #include <ivis/configMission.h>
+#include <std_srvs/SetBool.h>
 
 #define CONST_PI (double)3.141592653589793
 #define DEG_RAD(DEG) ((DEG) * ((CONST_PI) / (180.0)))
@@ -102,6 +103,12 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         /// Method that sends the list of waypoints through a service of ROS
         void sendWaypointList();
 
+        /// Method that starts the list of waypoints sended through a service of ROS
+        void startWaypointList();
+
+        /// Method that stops the list of waypoints sended through a service of ROS
+        void stopWaypointList();
+
     private:
         /// Method that notify the position of the local position of the UAV
         void updatePose();
@@ -120,7 +127,7 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         std::vector<Marble::GeoDataDocument*> documentMission_;
 
         ros::Subscriber poseSub_;
-        ros::ServiceClient configMissionReq_;
+        ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_;
 
         std::thread *poseThread_;
         std::mutex objectLockPose_;

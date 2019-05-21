@@ -37,12 +37,16 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
 
         ui->checkBox_alt->setChecked(false);
         ui->sendWP->setVisible(0);
+        ui->startWP->setVisible(0);
+        ui->stopWP->setVisible(0);
 
         connect(ui->center, SIGNAL(clicked()), this, SLOT(centerUAV()));
         connect(ui->addPoint, SIGNAL(clicked()), this, SLOT(addPointList()));
         connect(ui->deleteWP, SIGNAL(clicked()), this, SLOT(deleteWaypointList()));
         connect(ui->visualizeMission, SIGNAL(clicked()), this, SLOT(visualizeMissionList()));
         connect(ui->sendWP, SIGNAL(clicked()), this, SLOT(sendWaypointList()));
+        connect(ui->startWP, SIGNAL(clicked()), this, SLOT(startWaypointList()));
+        connect(ui->stopWP, SIGNAL(clicked()), this, SLOT(stopWaypointList()));
         connect(this, &MARBLE_vis::positionChanged , this, &MARBLE_vis::updatePose);
 
         mapWidget_= new Marble::MarbleWidget();
@@ -59,7 +63,10 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
 
         ros::NodeHandle nh;
         poseSub_ = nh.subscribe("/dji_telem/pos_gps", 1, &MARBLE_vis::CallbackPose, this);
-        configMissionReq_ = nh.serviceClient<ivis::configMission>("/gui_marble/waypoints");
+        configMissionReq_ = nh.serviceClient<ivis::configMission>("/dji_control/configure_mission");
+        // configMissionReq_ = nh.serviceClient<ivis::configMission>("/gui_marble/waypoints");
+        startMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/start_mission");
+        stopMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/stop_mission");
 
         currentClicked_ = new Marble::GeoDataPlacemark("Clicked");
         place_ = new Marble::GeoDataPlacemark("Pose");
@@ -300,6 +307,45 @@ void MARBLE_vis::sendWaypointList(){
         }
     }else{
         std::cout << "Failed to call service of CONFIG MISSION" << std::endl;
+    }
+
+    ui->startWP->setVisible(1);
+    ui->stopWP->setVisible(1);
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::startWaypointList(){
+    
+    std_srvs::SetBool srv;
+    srv.request.data = true;
+
+    if(startMissionReq_.call(srv)){
+        if(srv.response.success){
+            std::cout << "Service of START MISSION success" << std::endl;
+        }else{
+            std::cout << "Service of START MISSION failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of START MISSION" << std::endl;
+    }
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::stopWaypointList(){
+    
+    std_srvs::SetBool srv;
+    srv.request.data = true;
+
+    if(stopMissionReq_.call(srv)){
+        if(srv.response.success){
+            std::cout << "Service of STOP MISSION success" << std::endl;
+        }else{
+            std::cout << "Service of STOP MISSION failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of STOP MISSION" << std::endl;   
     }
 
 }
