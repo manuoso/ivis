@@ -1,4 +1,4 @@
 string type
-geometry_msgs/PoseStamped[] poseWP
+sensor_msgs/NavSatFix[] waypoint
 ---
 bool success

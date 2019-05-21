@@ -292,11 +292,11 @@ void MARBLE_vis::sendWaypointList(){
     srvConfig.request.type = typeMission;
 
     for(unsigned i = 0; i < waypoints_.size(); i++){
-        geometry_msgs::PoseStamped wp;
-        wp.pose.position.x = waypoints_[i].second[0];
-        wp.pose.position.y = waypoints_[i].second[1];
-        wp.pose.position.z = waypoints_[i].second[2];
-        srvConfig.request.poseWP.push_back(wp);
+        sensor_msgs::NavSatFix wp;
+        wp.latitude = waypoints_[i].second[0];
+        wp.longitude = waypoints_[i].second[1];
+        wp.altitude = waypoints_[i].second[2];
+        srvConfig.request.waypoint.push_back(wp);
     }
     
     if(configMissionReq_.call(srvConfig)){
