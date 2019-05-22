@@ -35,64 +35,76 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
     ui(new Ui::PCLViewer_gui)
     {
     
-    ui->setupUi(this);
-    this->setWindowTitle("PCL viewer");
+        ui->setupUi(this);
+        this->setWindowTitle("PCL viewer");
 
-    connect(this, &PCLViewer_gui::poseUAVchanged , this, &PCLViewer_gui::updateObjectUAV);
-    connect(this, &PCLViewer_gui::qvtkChanged , this, &PCLViewer_gui::updateQVTK);
+        connect(this, &PCLViewer_gui::updateGUIChanged , this, &PCLViewer_gui::updateGUI);
+        connect(this, &PCLViewer_gui::qvtkChanged , this, &PCLViewer_gui::updateQVTK);
 
-    // Config
-    nameCallbackPose_ = "/uavpose_pub";
-    nameCallbackPointcloud_ = "/pointcloud_pub";  //new points for the clouds
-    nameCallbackBridge_ = "/bridge_pub"; 
-    pathModelPose_ = "/home/luis/ws_ivis/src/ivis/uav_models/arbi.stl";
-    typeModelPose_ = "STL";
-    typePoint_ = "PointXYZRGB";
+        // Config
+        nameCallbackPose_ = "/dji_telem/local_position";
+        nameCallbackPointcloud_ = "/pointcloud_pub"; 
+        nameCallbackPoint_ = "/point_pub";  
 
-    // Set up the QVTK window
-    viewer_.reset(new pcl::visualization::PCLVisualizer("viewer", false));
-    viewer_->setBackgroundColor(0.6, 0.6, 0.6);
-    ui->qvtkWidget->SetRenderWindow(viewer_->getRenderWindow());
-    viewer_->setupInteractor(ui->qvtkWidget->GetInteractor(), ui->qvtkWidget->GetRenderWindow());
-    emit qvtkChanged();
-    
-    viewer_->resetCamera();
+        pathModelPose_ = "/home/apollo/programming/catkin_ivis/src/ivis/uav_models/aquiles.stl";
+        typeModelPose_ = "STL";
+        typePoint_ = "PointXYZRGB";
 
-    if(pathModelPose_ != ""){
-        if(typeModelPose_ == "OBJ"){
-            pcl::io::loadPolygonFileOBJ(pathModelPose_, untransformedUav_);
-        }else if(typeModelPose_ == "STL" ){
-            pcl::io::loadPolygonFileSTL(pathModelPose_, untransformedUav_);
-        }else{
-            std::cout << "Type of model pose unrecognised!" << std::endl;
-        }
-
-        if(typePoint_ == "PointXYZ"){
-            PointCloudT1::Ptr cloudUAV;
-            cloudUAV.reset (new PointCloudT1);
-            pcl::fromPCLPointCloud2(untransformedUav_.cloud, *cloudUAV);
-            viewer_->addPointCloud(cloudUAV, "uav_pose");
-        }else if(typePoint_ == "PointXYZRGB"){
-            PointCloudT2::Ptr cloudUAV;
-            cloudUAV.reset (new PointCloudT2);
-            pcl::fromPCLPointCloud2(untransformedUav_.cloud, *cloudUAV);
-            for(size_t i = 0; i < cloudUAV->points.size(); i++){
-                cloudUAV->points[i].r = 0;
-                cloudUAV->points[i].g = 0;
-                cloudUAV->points[i].b = 255;
-            }
-            viewer_->addPointCloud(cloudUAV, "uav_pose");
-        }
+        // Set up the QVTK window
+        viewer_.reset(new pcl::visualization::PCLVisualizer("viewer", false));
+        viewer_->setBackgroundColor(0.6, 0.6, 0.6);
+        ui->qvtkWidget->SetRenderWindow(viewer_->getRenderWindow());
+        viewer_->setupInteractor(ui->qvtkWidget->GetInteractor(), ui->qvtkWidget->GetRenderWindow());
         emit qvtkChanged();
-    }
+        
+        viewer_->resetCamera();
 
+        if(pathModelPose_ != ""){
+            if(typeModelPose_ == "OBJ"){
+                pcl::io::loadPolygonFileOBJ(pathModelPose_, untransformedUav_);
+            }else if(typeModelPose_ == "STL" ){
+                pcl::io::loadPolygonFileSTL(pathModelPose_, untransformedUav_);
+            }else{
+                std::cout << "Type of model pose unrecognised!" << std::endl;
+            }
 
-    ros::NodeHandle nh;
-    poseSub_ = nh.subscribe(nameCallbackPose_, 1, &PCLViewer_gui::CallbackPose, this);
-    pointcloudSub_ = nh.subscribe(nameCallbackPointcloud_, 1, &PCLViewer_gui::CallbackPointcloud, this);
-    bridgeSub_ = nh.subscribe<PointCloudT1>(nameCallbackBridge_, 1, &PCLViewer_gui::CallbackBridge, this);
+            if(typePoint_ == "PointXYZ"){
+                PointCloudT1::Ptr cloudUAV;
+                cloudUAV.reset (new PointCloudT1);
+                pcl::fromPCLPointCloud2(untransformedUav_.cloud, *cloudUAV);
+                viewer_->addPointCloud(cloudUAV, "uav_pose");
+            }else if(typePoint_ == "PointXYZRGB"){
+                PointCloudT2::Ptr cloudUAV;
+                cloudUAV.reset (new PointCloudT2);
+                pcl::fromPCLPointCloud2(untransformedUav_.cloud, *cloudUAV);
+                for(size_t i = 0; i < cloudUAV->points.size(); i++){
+                    cloudUAV->points[i].r = 0;
+                    cloudUAV->points[i].g = 0;
+                    cloudUAV->points[i].b = 255;
+                }
+                viewer_->addPointCloud(cloudUAV, "uav_pose");
+            }
+            emit qvtkChanged();
+        }
 
-    lastTimePose_ = std::chrono::high_resolution_clock::now();
+        ros::NodeHandle nh;
+        poseSub_ = nh.subscribe(nameCallbackPose_, 1, &PCLViewer_gui::CallbackPose, this);
+        pointSub_ = nh.subscribe(nameCallbackPoint_, 1, &PCLViewer_gui::CallbackPoint, this);
+        pointcloudSub_ = nh.subscribe<PointCloudT2>(nameCallbackPointcloud_, 1, &PCLViewer_gui::CallbackPointcloud, this);
+
+        lastTimePose_ = std::chrono::high_resolution_clock::now();
+
+        updateThread_ = new std::thread([&]{
+                while(!stopAll_ && ros::ok()){
+                    if(pathModelPose_ != ""){
+                        auto t1 = std::chrono::high_resolution_clock::now();
+                        if(std::chrono::duration_cast<std::chrono::milliseconds>(t1 - lastTimePose_).count() > 100){
+                            lastTimePose_ = t1;
+                            emit updateGUIChanged(); 
+                        }
+                    }
+                }
+            });
 
     }
 
@@ -109,7 +121,7 @@ PCLViewer_gui::~PCLViewer_gui()
 //---------------------------------------------------------------------------------------------------------------------
 void PCLViewer_gui::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg){
     
-    objectLock_.lock();
+    objectLockPose_.lock();
     poseX_ = _msg->pose.position.x;
     poseY_ = _msg->pose.position.y;
     poseZ_ = _msg->pose.position.z;
@@ -117,61 +129,40 @@ void PCLViewer_gui::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _ms
     poseOY_ = _msg->pose.orientation.y;
     poseOZ_ = _msg->pose.orientation.z;
     poseOW_ = _msg->pose.orientation.w;
-    objectLock_.unlock();
+    objectLockPose_.unlock();
 
-    if(pathModelPose_ != ""){
-        auto t1 = std::chrono::high_resolution_clock::now();
-        if(std::chrono::duration_cast<std::chrono::milliseconds>(t1 - lastTimePose_).count() > 100){
-            lastTimePose_ = t1;
-            emit poseUAVchanged(); 
-        }
-    }
-}
-//---------------------------------------------------------------------------------------------------------------------
-void PCLViewer_gui::CallbackPointcloud(const geometry_msgs::Point::ConstPtr& _msg){
-
-    
-
-    objectLock_.lock();
-    newPointRGB_.x = _msg->x;
-    newPointRGB_.y = _msg->y;
-    newPointRGB_.z = _msg->z;
-    newPointRGB_.r = 0;
-    newPointRGB_.g = 1;
-    newPointRGB_.b = 0;
-    
-
-    idSphere_ = "sphere" + std::to_string(ContSpheres_);
-    viewer_->addSphere(newPointRGB_, radSphere_, newPointRGB_.r, newPointRGB_.g, newPointRGB_.b, idSphere_);
-    ContSpheres_++;
-    objectLock_.unlock();
-    ui->qvtkWidget->update();
-    
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void PCLViewer_gui::CallbackBridge(const PointCloudT1::ConstPtr& _msg){
-    std::cout<<"Entra callback"<<std::endl;
- /* printf ("Cloud: width = %d, height = %d\n", _msg->width, _msg->height);
-  BOOST_FOREACH (const pcl::PointXYZ& pt, _msg->points)
-    printf ("\t(%f, %f, %f)\n", pt.x, pt.y, pt.z);*/
+void PCLViewer_gui::CallbackPoint(const geometry_msgs::Point::ConstPtr& _msg){
 
-   /* PointCloudT1::Ptr cloudd;
-    cloudd.reset (new PointCloudT1);
-    cloudd->points[0].x = 0;  
-                cloudd->points[0].y = 0;
-                cloudd->points[0].z = 0;
-    viewer_->addPointCloud(cloudd, "uav_posef");*/
-    idBridge_ = "bridge_cloud" + std::to_string(ContBridge_);
-    viewer_->addPointCloud(_msg, idBridge_);
-    ui->qvtkWidget->update();
-    ContBridge_++;
+    objectLockPoint_.lock();
+    point_.x = _msg->x;
+    point_.y = _msg->y;
+    point_.z = _msg->z;
+    point_.r = 0;
+    point_.g = 1;
+    point_.b = 0;
+    objectLockPoint_.unlock();
+
+}
+
+
+//---------------------------------------------------------------------------------------------------------------------
+void PCLViewer_gui::CallbackPointcloud(const PointCloudT2::ConstPtr& _msg){
+
+    idPointcloud_ = "point_cloud" + std::to_string(contPointcloud_);
+    viewer_->addPointCloud(_msg, idPointcloud_);
+
+    contPointcloud_++;
+    emit qvtkChanged();
+
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void PCLViewer_gui::updateObjectUAV(){
+void PCLViewer_gui::updateGUI(){
     
-    objectLock_.lock();
+    objectLockPose_.lock();
     Eigen::Quaternionf q;
     q.x() = poseOX_;
     q.y() = poseOY_;
@@ -184,38 +175,50 @@ void PCLViewer_gui::updateObjectUAV(){
     pose(0,3) = poseX_;
     pose(1,3) = poseY_;
     pose(2,3) = poseZ_;
-    objectLock_.unlock();
+
+    uavPoint_.x = poseX_;
+    uavPoint_.y = poseY_;
+    uavPoint_.z = poseZ_;
+    uavPoint_.r = 1;
+    uavPoint_.g = 0;
+    uavPoint_.b = 0;
+    objectLockPose_.unlock();
 
     Eigen::Affine3f transform(pose);
     viewer_->updatePointCloudPose("uav_pose", transform);
-
-    objectLock_.lock();
-    UavPointRGB_.x = poseX_;
-    UavPointRGB_.y = poseY_;
-    UavPointRGB_.z = poseZ_;
-    UavPointRGB_.r = 1;
-    UavPointRGB_.g = 0;
-    UavPointRGB_.b = 0;
     
+    idUavSphere_ = "uav_pose_sphere" + std::to_string(cont_);
+    viewer_->addSphere(uavPoint_, radSphere_, uavPoint_.r, uavPoint_.g, uavPoint_.b, idUavSphere_);
 
-    idUavSphere_ = "uav_pose_sphere" + std::to_string(UavSpheres_);
-    viewer_->addSphere(UavPointRGB_, radSphere_, UavPointRGB_.r, UavPointRGB_.g, UavPointRGB_.b, idUavSphere_);
-
-    if(FirstTime_){
-        FirstTime_=false;
-        line_vector_[0]=UavPointRGB_;
-    }
-    else{
-        line_vector_[1]=UavPointRGB_;
+    if(firstTime_){
+        firstTime_ = false;
+        line_vector_[0] = uavPoint_;
+    }else{
+        line_vector_[1] = uavPoint_;
       
-        UavIdLine_ = "uav_pose_line" + std::to_string(UavSpheres_);
-        viewer_->addLine<pcl::PointXYZRGB> (line_vector_[0],line_vector_[1], UavIdLine_);
-        line_vector_[0]=line_vector_[1];
-    }
-    UavSpheres_++;
-    objectLock_.unlock();
+        uavIdLine_ = "uav_pose_line" + std::to_string(cont_);
+        viewer_->addLine<pcl::PointXYZRGB>(line_vector_[0], line_vector_[1], uavIdLine_);
 
-    ui->qvtkWidget->update();
+        line_vector_[0] = line_vector_[1];
+    }
+
+    objectLockPoint_.lock();
+    PointT2 newPoint = point_;
+    objectLockPoint_.unlock();
+    
+    idSphere_ = "sphere" + std::to_string(cont_);
+    viewer_->addSphere(newPoint, radSphere_, newPoint.r, newPoint.g, newPoint.b, idSphere_);
+
+    ui->lineEdit_lp1->setText(QString::number(uavPoint_.x));
+    ui->lineEdit_lp2->setText(QString::number(uavPoint_.y));
+    ui->lineEdit_lp3->setText(QString::number(uavPoint_.z));
+
+    ui->lineEdit_tp1->setText(QString::number(newPoint.x));
+    ui->lineEdit_tp2->setText(QString::number(newPoint.y));
+    ui->lineEdit_tp3->setText(QString::number(newPoint.z));
+
+    cont_++;
+    emit qvtkChanged();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
