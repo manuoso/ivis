@@ -46,6 +46,7 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         connect(ui->center, SIGNAL(clicked()), this, SLOT(centerUAV()));
         connect(ui->addPoint, SIGNAL(clicked()), this, SLOT(addPointList()));
         connect(ui->deleteWP, SIGNAL(clicked()), this, SLOT(deleteWaypointList()));
+        connect(ui->cleanWP, SIGNAL(clicked()), this, SLOT(cleanWaypointList()));
         connect(ui->visualizeMission, SIGNAL(clicked()), this, SLOT(visualizeMissionList()));
         connect(ui->sendWP, SIGNAL(clicked()), this, SLOT(sendWaypointList()));
         connect(ui->startWP, SIGNAL(clicked()), this, SLOT(startWaypointList()));
@@ -233,8 +234,7 @@ void MARBLE_vis::addPointList(){
         }
         
 
-        placeMission_.push_back(place);
-        mapWidget_->model()->treeModel()->addFeature(document_, placeMission_[idWP_]);
+        mapWidget_->model()->treeModel()->addFeature(document_, place);
 
         std::string swaypoint = "ID: " + std::to_string(idWP_);
         ui->listWidget_WayPoints->addItem(QString::fromStdString(swaypoint));
@@ -257,9 +257,8 @@ void MARBLE_vis::addPointList(){
 
         std::vector<double> point = {lastLatClicked_, lastLonClicked_, alt};
         waypoints_.push_back(std::make_pair(idWP_, point));
-        
-        placeMission_.push_back(place);
-        mapWidget_->model()->treeModel()->addFeature(document_, placeMission_[idWP_]);
+
+        mapWidget_->model()->treeModel()->addFeature(document_, place);
 
         std::string swaypoint = "ID: " + std::to_string(idWP_);
         ui->listWidget_WayPoints->addItem(QString::fromStdString(swaypoint));
@@ -278,11 +277,30 @@ void MARBLE_vis::deleteWaypointList(){
     QList<QListWidgetItem*> items = ui->listWidget_WayPoints->selectedItems();
     foreach(QListWidgetItem * item, items){
         int index = ui->listWidget_WayPoints->row(item);
-        waypoints_.erase(waypoints_.begin() + index); 
-        mapWidget_->model()->treeModel()->removeFeature(placeMission_[index]);
+        waypoints_.erase(waypoints_.begin() + index);
+        mapWidget_->model()->treeModel()->removeFeature(document_, index+2);    // +2 because we have pose and clicked too in features
         delete ui->listWidget_WayPoints->takeItem(ui->listWidget_WayPoints->row(item));
     }
 
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::cleanWaypointList(){
+    
+    visualizeMission_ = false;
+    ui->sendWP->setVisible(0);
+
+    // Clear vector
+    waypoints_.clear();
+    
+    QList<QListWidgetItem*> items = ui->listWidget_WayPoints->findItems("*", Qt::MatchWildcard);
+    foreach(QListWidgetItem *item, items){
+        int index = ui->listWidget_WayPoints->row(item);
+        delete ui->listWidget_WayPoints->takeItem(ui->listWidget_WayPoints->row(item));
+        mapWidget_->model()->treeModel()->removeFeature(document_, index+2);
+    }
+
+    idWP_ = 0;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

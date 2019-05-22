@@ -97,6 +97,9 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         /// Method that deletes the selected waypoint from the waypoints list
         void deleteWaypointList();
 
+        /// Method that cleans the selected waypoint from the waypoints list
+        void cleanWaypointList();
+
         /// Method that visualizes the mission on Marble map
         void visualizeMissionList();
 
@@ -128,7 +131,6 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         Marble::MarbleWidget *mapWidget_;
 
         Marble::GeoDataPlacemark *place_, *currentClicked_;
-        std::vector<Marble::GeoDataPlacemark*> placeMission_;
         Marble::GeoDataDocument *document_;
         std::vector<Marble::GeoDataDocument*> documentMission_;
 
