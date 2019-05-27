@@ -43,6 +43,7 @@ UAV_control::UAV_control(QWidget *parent) :
         connect(ui->startVel, SIGNAL(clicked()), this, SLOT(startVelocityUAV()));
         connect(ui->stopPos, SIGNAL(clicked()), this, SLOT(stopPositionUAV()));
         connect(ui->stopVel, SIGNAL(clicked()), this, SLOT(stopVelocityUAV()));
+        connect(ui->recCont, SIGNAL(clicked()), this, SLOT(recoverControlUAV()));
 
         connect(this, &UAV_control::telemChanged , this, &UAV_control::updateTelem);
 
@@ -50,6 +51,7 @@ UAV_control::UAV_control(QWidget *parent) :
         landReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/land");
         takeoffReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/takeoff");
         emergencyBrakeReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/emergency_brake");
+        recoverControlReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/recover_control");
 
         velocityPub_ = nh.advertise<geometry_msgs::TwistStamped>("/dji_control/go_velocity", 1);
         positionPub_ = nh.advertise<geometry_msgs::PoseStamped>("/dji_control/go_position", 1); 
@@ -236,6 +238,24 @@ void UAV_control::stopVelocityUAV(){
 
     ui->startVel->setVisible(1);
     ui->stopVel->setVisible(0);
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void UAV_control::recoverControlUAV(){
+
+    std_srvs::SetBool srv;
+    srv.request.data = true;
+
+    if(recoverControlReq_.call(srv)){
+        if(srv.response.success){
+            std::cout << "Service of RECOVER CONTROL success" << std::endl;
+        }else{
+            std::cout << "Service of RECOVER CONTROL failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of RECOVER CONTROL" << std::endl;
+    }
 
 }
 

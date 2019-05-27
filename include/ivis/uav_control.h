@@ -100,6 +100,9 @@ class UAV_control : public QMainWindow{
         /// Method that finish send velocity to the UAV
         void stopVelocityUAV();
 
+        /// Method for recover control from manual of the UAV
+        void recoverControlUAV();
+
     private:
         /// Send it by ROS Publishers
         void sendThread();
@@ -144,7 +147,7 @@ class UAV_control : public QMainWindow{
 
         ros::Publisher velocityPub_, positionPub_;
         ros::Subscriber poseGPSSub_, poseLocalSub_, poseVelSub_, poseRCSub_, modeSub_, flyStatusSub_, nBatSub_, djiConStaSub_;
-        ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_;
+        ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_, recoverControlReq_;
 
         std::thread *sendThread_, *telemThread_;
         std::mutex objectLockGPS_, objectLockLocal_, objectLockVel_, objectLockRC_, objectLockBat_, objectLockMode_, objectLockFS_, objectLockDJICS_;
