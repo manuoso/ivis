@@ -326,9 +326,21 @@ void MARBLE_vis::sendWaypointList(){
         wp.latitude = waypoints_[i].second[0];
         wp.longitude = waypoints_[i].second[1];
         wp.altitude = waypoints_[i].second[2];
-        wp.position_covariance[0] = radiusHP_;
         srvConfig.request.waypoint.push_back(wp);
     }
+
+    srvConfig.request.radius = radiusHP_;
+    
+    QString qMaxVel = ui->lineEdit_maxVel->text();
+    double maxVel = qMaxVel.toDouble(); 
+
+    QString qIdelVel = ui->lineEdit_idleVel->text();
+    double idleVel = qIdelVel.toDouble(); 
+
+    srvConfig.request.yawMode = 0;
+    srvConfig.request.clockwiseMode = 0;
+    srvConfig.request.maxVel = maxVel;
+    srvConfig.request.idleVel = idleVel;
     
     if(configMissionReq_.call(srvConfig)){
         if(srvConfig.response.success){
