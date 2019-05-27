@@ -157,8 +157,7 @@ bool MARBLE_vis::render(GeoPainter *painter, ViewportParams *viewport, const QSt
             painter->setRenderHint(QPainter::Antialiasing, true);
             painter->setBrush(QBrush(Qt::yellow));
             painter->setPen(QPen(QBrush(Qt::green), 2.0, Qt::SolidLine, Qt::RoundCap));
-            // 666 TODO: RADIO REAL??
-            painter->drawEllipse(hotpoint, 100, 100);
+            painter->drawEllipse(hotpoint, radiusHP_*10, radiusHP_*10);
 
         }else{
             std::cout << "Unrecognized TYPE of MISSION" << std::endl;
@@ -354,6 +353,8 @@ void MARBLE_vis::sendWaypointList(){
 
     ui->startWP->setVisible(1);
     ui->stopWP->setVisible(1);
+    ui->pauseWP->setVisible(1);
+    ui->resumeWP->setVisible(1);
 
 }
 
