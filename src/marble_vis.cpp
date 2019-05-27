@@ -44,7 +44,6 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         ui->resumeWP->setVisible(0);
 
         connect(ui->center, SIGNAL(clicked()), this, SLOT(centerUAV()));
-        connect(ui->addPoint, SIGNAL(clicked()), this, SLOT(addPointList()));
         connect(ui->deleteWP, SIGNAL(clicked()), this, SLOT(deleteWaypointList()));
         connect(ui->cleanWP, SIGNAL(clicked()), this, SLOT(cleanWaypointList()));
         connect(ui->visualizeMission, SIGNAL(clicked()), this, SLOT(visualizeMissionList()));
@@ -54,6 +53,7 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         connect(ui->pauseWP, SIGNAL(clicked()), this, SLOT(pauseWaypointList()));
         connect(ui->resumeWP, SIGNAL(clicked()), this, SLOT(resumeWaypointList()));
         connect(this, &MARBLE_vis::positionChanged , this, &MARBLE_vis::updatePose);
+        connect(this, &MARBLE_vis::addPoint , this, &MARBLE_vis::addPointList);
 
         mapWidget_= new Marble::MarbleWidget();
         mapWidget_->setProjection(Marble::Mercator);
@@ -415,6 +415,23 @@ void MARBLE_vis::resumeWaypointList(){
         std::cout << "Failed to call service of RESUME MISSION" << std::endl;   
     }
 
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+// PROTECTED
+//---------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::keyPressEvent(QKeyEvent *_event){
+    if(_event->key() == Qt::Key_A){
+        if(ui->checkBox_addPoint->isChecked()){
+            emit addPoint(); 
+        }
+    }else if(_event->key() == Qt::Key_E){
+        ui->checkBox_addPoint->setChecked(true);
+    }else if(_event->key() == Qt::Key_D){
+        ui->checkBox_addPoint->setChecked(false);
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------------

@@ -27,6 +27,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGraphicsItem>
+#include <QKeyEvent>
 
 #include <iostream>
 #include <stdio.h>
@@ -79,10 +80,13 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 
         /// Implemented from LayerInterface
         virtual bool render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos = "NONE", GeoSceneLayer * layer = 0);
-
+ 
     signals:
         /// Signal that warns that there is a change in the pose of the uav
         void positionChanged();
+
+        /// Signal that adds the clicked point to the list of Waypoints if A has been pressed
+        void addPoint();
 
     private slots:
         /// Method that takes the latitude and longitude coordinates of a mouse click
@@ -117,6 +121,10 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 
         /// Method that resume the list of waypoints sended through a service of ROS
         void resumeWaypointList();
+    
+    protected:
+        /// Method to capture a key press on the keyboard
+        void keyPressEvent(QKeyEvent *);
 
     private:
         /// Method that notify the position of the local position of the UAV
