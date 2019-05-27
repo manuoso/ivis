@@ -361,7 +361,7 @@ void UAV_control::CallbackRC(const std_msgs::Float64MultiArray::ConstPtr& _msg){
 void UAV_control::CallbackBat(const sensor_msgs::BatteryState::ConstPtr& _msg){
 
     objectLockBat_.lock();
-    batLevel = _msg->percentage;
+    batLevel = _msg->voltage/1000.0;
     objectLockBat_.unlock();
 
 }
