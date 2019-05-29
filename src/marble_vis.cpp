@@ -330,14 +330,24 @@ void MARBLE_vis::sendWaypointList(){
 
     srvConfig.request.radius = radiusHP_;
     
+    QString qYawMode = ui->lineEdit_yawMode->text();
+    double yawMode = qYawMode.toInt(); 
+
     QString qMaxVel = ui->lineEdit_maxVel->text();
     double maxVel = qMaxVel.toDouble(); 
 
     QString qIdelVel = ui->lineEdit_idleVel->text();
     double idleVel = qIdelVel.toDouble(); 
 
-    srvConfig.request.yawMode = 0;
-    srvConfig.request.clockwiseMode = 0;
+    int clockwiseMode = 0;
+    if(ui->checkBox_clockwise->isChecked()){
+        clockwiseMode = 1; 
+    }else{
+        clockwiseMode = 0;
+    }
+    
+    srvConfig.request.yawMode = yawMode;
+    srvConfig.request.clockwiseMode = clockwiseMode;
     srvConfig.request.maxVel = maxVel;
     srvConfig.request.idleVel = idleVel;
     
