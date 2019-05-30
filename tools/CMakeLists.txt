@@ -35,7 +35,9 @@ if(${catkin_FOUND})
 	endmacro()
 	build_ros_tool(control_uav control_uav/main.cpp)
 	build_ros_tool(vis_marble vis_marble/main.cpp)
-	build_ros_tool(gui_pcl gui_pcl/main.cpp)
+	if(BUILD_PCL)
+		build_ros_tool(gui_pcl gui_pcl/main.cpp)
+	endif()
 endif(${catkin_FOUND})
 
 # Macro for tool without using ROS components

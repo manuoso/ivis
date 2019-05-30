@@ -19,6 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifdef IVIS_USE_PCL    
+
 #include <ivis/pclviewer_gui.h>
 #include <ivis/ui_pclviewer_gui.h>
 
@@ -225,3 +227,5 @@ void PCLViewer_gui::updateGUI(){
 void PCLViewer_gui::updateQVTK(){
     ui->qvtkWidget->update();
 }
+
+#endif

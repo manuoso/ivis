@@ -19,6 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifdef IVIS_USE_PCL
+
 #ifndef PCLVIEWER_GUI_H
 #define PCLVIEWER_GUI_H
 
@@ -131,3 +133,5 @@ private:
 };
 
 #endif // PCLVIEWER_GUI_H
+
+#endif

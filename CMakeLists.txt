@@ -22,6 +22,8 @@
 cmake_minimum_required (VERSION 3.8 FATAL_ERROR)
 project(ivis VERSION 0.1 LANGUAGES C CXX)
 
+set(BUILD_PCL OFF)
+
 #########################################
 ###### Loading 3rd party libraries ######
 #########################################
@@ -46,19 +48,21 @@ endif()
 
 #########################################
 ## Load PCL
-find_package(PCL QUIET REQUIRED)
-if(${PCL_FOUND})
-	MESSAGE( STATUS "Adding properly PCL and its dependencies")
-	add_definitions(-DENABLE_PCL)
-	add_definitions(${PCL_DEFINITIONS})
-	list(APPEND IVIS_DEFINITIONS "IVIS_USE_PCL")
-	if(${PCL_VERSION} VERSION_GREATER 1.9)
-		list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_9")
+if(BUILD_PCL)
+	find_package(PCL QUIET REQUIRED)
+	if(${PCL_FOUND})
+		MESSAGE( STATUS "Adding properly PCL and its dependencies")
+		add_definitions(-DENABLE_PCL)
+		add_definitions(${PCL_DEFINITIONS})
+		list(APPEND IVIS_DEFINITIONS "IVIS_USE_PCL")
+		if(${PCL_VERSION} VERSION_GREATER 1.9)
+			list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_9")
+		else()
+			list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_8")
+		endif()
 	else()
-		list(APPEND IVIS_DEFINITIONS "HAS_PCL_1_8")
+		MESSAGE( FATAL_ERROR "Couldnt Add PCL and/or it's dependencies")
 	endif()
-else()
-	MESSAGE( FATAL_ERROR "Couldnt Add PCL and/or it's dependencies")
 endif()
 
 #########################################
@@ -133,8 +137,12 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/eigen3")
 ##add_executable(pointcloud_pub "src/pointcloud_pub.cpp")
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${QT5_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PCL_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${PCL_LIBRARIES})
+
+if(BUILD_PCL)	
+	target_include_directories(${PROJECT_NAME} PUBLIC ${PCL_INCLUDE_DIRS})
+	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${PCL_LIBRARIES})
+endif()
+
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Marble)
 
 if(${catkin_FOUND})
