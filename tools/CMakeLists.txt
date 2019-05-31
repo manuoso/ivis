@@ -42,6 +42,9 @@ if(${catkin_FOUND})
 	if(BUILD_PCL)
 		build_ros_tool(gui_pcl gui_pcl/main.cpp)
 	endif()
+	if(BUILD_TABS)
+		build_ros_tool(gui_tabs tabs_gui/main.cpp)
+	endif()
 endif(${catkin_FOUND})
 
 # Macro for tool without using ROS components

@@ -28,6 +28,8 @@ set(BUILD_MARBLE ON)
 
 set(BUILD_CONTROL ON)
 
+set(BUILD_TABS ON)
+
 #########################################
 ###### Loading 3rd party libraries ######
 #########################################
@@ -40,6 +42,10 @@ endif()
 
 if(BUILD_CONTROL)
 	list(APPEND IVIS_DEFINITIONS "IVIS_USE_CONTROL")
+endif()
+
+if(BUILD_TABS)
+	list(APPEND IVIS_DEFINITIONS "IVIS_USE_TABS")
 endif()
 
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
