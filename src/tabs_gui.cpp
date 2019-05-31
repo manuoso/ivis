@@ -35,13 +35,11 @@ TABS_gui::TABS_gui(QWidget *parent) :
         tabWidget_->setFixedSize(1150, 800);
 
         #ifdef IVIS_USE_CONTROL    
-            std::cout << "Create GUI UAV Control" << std::endl;
             uavVis_ = new UAV_control;
             tabWidget_->addTab(uavVis_, "UAV CONTROL GUI");
         #endif   
 
         #ifdef IVIS_USE_MARBLE    
-            std::cout << "Create GUI Missions" << std::endl;
             marbleVis_ = new MARBLE_vis;
             tabWidget_->addTab(marbleVis_, "MISSIONS GUI");
         #endif     
