@@ -19,6 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifdef IVIS_USE_CONTROL
+
 #include <ivis/uav_control.h>
 #include <ui_uav_control.h>
 
@@ -412,3 +414,5 @@ void UAV_control::CallbackDJICS(const std_msgs::String::ConstPtr& _msg){
     objectLockDJICS_.unlock();
 
 }
+
+#endif

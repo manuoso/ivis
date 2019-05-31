@@ -19,6 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifdef IVIS_USE_MARBLE
+
 #include <ivis/marble_vis.h>
 #include <ui_marble_vis.h>
 
@@ -487,3 +489,5 @@ void MARBLE_vis::CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg){
     altUAV_ = _msg->altitude;
     objectLockPose_.unlock();
 }
+
+#endif

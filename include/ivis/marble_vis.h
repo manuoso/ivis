@@ -19,6 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifdef IVIS_USE_MARBLE
+
 #ifndef MARBLE_VIS_H
 #define MARBLE_VIS_H
 
@@ -166,3 +168,5 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 };
 
 #endif // MARBLE_VIS_H
+
+#endif

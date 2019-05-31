@@ -24,6 +24,10 @@ project(ivis VERSION 0.1 LANGUAGES C CXX)
 
 set(BUILD_PCL OFF)
 
+set(BUILD_MARBLE ON)
+
+set(BUILD_CONTROL ON)
+
 #########################################
 ###### Loading 3rd party libraries ######
 #########################################
@@ -32,6 +36,10 @@ if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE Release CACHE STRING
        "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
        FORCE )
+endif()
+
+if(BUILD_CONTROL)
+	list(APPEND IVIS_DEFINITIONS "IVIS_USE_CONTROL")
 endif()
 
 # set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
@@ -67,8 +75,10 @@ endif()
 
 #########################################
 ## Load Marble
-find_package(Marble REQUIRED)
-list(APPEND IVIS_DEFINITIONS "IVIS_USE_MARBLE")
+if(BUILD_MARBLE)
+	find_package(Marble REQUIRED)
+	list(APPEND IVIS_DEFINITIONS "IVIS_USE_MARBLE")
+endif()
 
 #########################################
 ## Load Qt5
@@ -135,7 +145,7 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
 # target_link_libraries(${PROJECT_NAME} PUBLIC pthread)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "/usr/include/eigen3")
-##add_executable(pointcloud_pub "src/pointcloud_pub.cpp")
+
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${QT5_LIBRARIES})
 
 if(BUILD_PCL)	
@@ -143,7 +153,9 @@ if(BUILD_PCL)
 	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${PCL_LIBRARIES})
 endif()
 
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Marble)
+if(BUILD_MARBLE)
+	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC Marble)
+endif()
 
 if(${catkin_FOUND})
 	target_include_directories(${PROJECT_NAME} PUBLIC ${catkin_INCLUDE_DIRS})

@@ -19,6 +19,8 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //---------------------------------------------------------------------------------------------------------------------
 
+#ifdef IVIS_USE_CONTROL
+
 #ifndef UAV_CONTROL_H
 #define UAV_CONTROL_H
 
@@ -175,3 +177,5 @@ class UAV_control : public QMainWindow{
 };
 
 #endif // UAV_CONTROL_H
+
+#endif
