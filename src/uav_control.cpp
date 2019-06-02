@@ -93,36 +93,40 @@ UAV_control::~UAV_control(){
 //---------------------------------------------------------------------------------------------------------------------
 void UAV_control::takeoffUAV(){
 
-    std_srvs::SetBool srv;
-    srv.request.data = true;
-    
-    if(takeoffReq_.call(srv)){
-        if(srv.response.success){
-            std::cout << "Service of TAKE OFF success" << std::endl;
+    std::thread takeoffThread = std::thread([&]{
+        std_srvs::SetBool srv;
+        srv.request.data = true;
+        
+        if(takeoffReq_.call(srv)){
+            if(srv.response.success){
+                std::cout << "Service of TAKE OFF success" << std::endl;
+            }else{
+                std::cout << "Service of TAKE OFF failed" << std::endl;
+            }
         }else{
-            std::cout << "Service of TAKE OFF failed" << std::endl;
+            std::cout << "Failed to call service of TAKE OFF" << std::endl;
         }
-    }else{
-        std::cout << "Failed to call service of TAKE OFF" << std::endl;
-    }
+    });
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 void UAV_control::landUAV(){
 
-    std_srvs::SetBool srv;
-    srv.request.data = true;
-    
-    if(landReq_.call(srv)){
-        if(srv.response.success){
-            std::cout << "Service of LAND success" << std::endl;
+    std::thread landThread = std::thread([&]{    
+        std_srvs::SetBool srv;
+        srv.request.data = true;
+        
+        if(landReq_.call(srv)){
+            if(srv.response.success){
+                std::cout << "Service of LAND success" << std::endl;
+            }else{
+                std::cout << "Service of LAND failed" << std::endl;
+            }
         }else{
-            std::cout << "Service of LAND failed" << std::endl;
+            std::cout << "Failed to call service of LAND" << std::endl;
         }
-    }else{
-        std::cout << "Failed to call service of LAND" << std::endl;
-    }
+    });
 
 }
 
