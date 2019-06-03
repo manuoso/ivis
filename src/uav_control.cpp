@@ -56,6 +56,7 @@ UAV_control::UAV_control(QWidget *parent) :
         takeoffReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/takeoff");
         emergencyBrakeReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/emergency_brake");
         recoverControlReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/recover_control");
+        lostGPSReq_ = nh.serviceClient<std_srvs::SetBool>("/missions_gui/lost_gps");
 
         velocityPub_ = nh.advertise<geometry_msgs::TwistStamped>("/dji_control/go_velocity", 1);
         positionPub_ = nh.advertise<geometry_msgs::PoseStamped>("/dji_control/go_position", 1); 
@@ -278,10 +279,38 @@ void UAV_control::recoverControlUAV(){
 //---------------------------------------------------------------------------------------------------------------------
 void UAV_control::goToHomeUAV(){
 
+    lostGPS_ = true;
+
+    std_srvs::SetBool srv;
+    srv.request.data = lostGPS_;
+
+    if(lostGPSReq_.call(srv)){
+        if(srv.response.success){
+            std::cout << "Service of LOST GPS success" << std::endl;
+        }else{
+            std::cout << "Service of LOST GPS failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of LOST GPS" << std::endl;
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
+
+    objectLockGPS_.lock();
+    ui->lineEdit_rg1->setText("LOST");
+    ui->lineEdit_rg2->setText("LOST");
+    ui->lineEdit_rg3->setText("LOST");
+    ui->lineEdit_ngps->setText("LOST");
+
+    homeX_ = 0.0;
+    homeY_ = 0.0;
+    homeZ_ = position_.z;
+    objectLockGPS_.unlock();
+
     msgPosition_.header.stamp = ros::Time::now();
     msgPosition_.pose.position.x = 0.0;
     msgPosition_.pose.position.y = 0.0;
-    msgPosition_.pose.position.z = 2;
+    msgPosition_.pose.position.z = homeZ_;
 
     type_ = "gotohome";
     sendThread_ = new std::thread(&UAV_control::sendThread, this);
@@ -319,13 +348,15 @@ void UAV_control::sendThread(){
 //---------------------------------------------------------------------------------------------------------------------
 void UAV_control::updateTelem(){
 
-    objectLockGPS_.lock();
-    ui->lineEdit_rg1->setText(QString::number(poseGPSLat_));
-    ui->lineEdit_rg2->setText(QString::number(poseGPSLon_));
-    ui->lineEdit_rg3->setText(QString::number(poseGPSAlt_));
-    ui->lineEdit_ngps->setText(QString::number(nGPS_));
-    objectLockGPS_.unlock();
-
+    if(!lostGPS_){
+        objectLockGPS_.lock();
+        ui->lineEdit_rg1->setText(QString::number(poseGPSLat_));
+        ui->lineEdit_rg2->setText(QString::number(poseGPSLon_));
+        ui->lineEdit_rg3->setText(QString::number(poseGPSAlt_));
+        ui->lineEdit_ngps->setText(QString::number(nGPS_));
+        objectLockGPS_.unlock();
+    }
+    
     objectLockLocal_.lock();
     ui->lineEdit_l1->setText(QString::number(position_.x));
     ui->lineEdit_l2->setText(QString::number(position_.y));

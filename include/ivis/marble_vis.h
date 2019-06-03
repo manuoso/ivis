@@ -136,6 +136,9 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         /// \param _msg: data receive to update pose
         void CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg);
 
+        /// Method to know that we have lost the gps signal
+        bool lostGPSService(std_srvs::SetBool::Request &_req, std_srvs::SetBool::Response &_res);
+
     private:
         Ui::MARBLE_vis *ui;
         Marble::MarbleWidget *mapWidget_;
@@ -146,6 +149,7 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 
         ros::Subscriber poseSub_;
         ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_, pauseMissionReq_, resumeMissionReq_;
+        ros::ServiceServer lostGPSSrv_;
 
         std::thread *poseThread_;
         std::mutex objectLockPose_;
@@ -154,6 +158,8 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 
         bool stopAll_ = false;
         bool visualizeMission_ = false;
+
+        bool lostGPS_ = false;
 
         std::string typeMission_ = "";
 

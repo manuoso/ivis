@@ -72,11 +72,12 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         ros::NodeHandle nh;
         poseSub_ = nh.subscribe("/dji_telem/pos_gps", 1, &MARBLE_vis::CallbackPose, this);
         configMissionReq_ = nh.serviceClient<ivis::configMission>("/dji_control/configure_mission");
-        // configMissionReq_ = nh.serviceClient<ivis::configMission>("/gui_marble/waypoints");
         startMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/start_mission");
         stopMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/stop_mission");
         pauseMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/pause_mission");
         resumeMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/resume_mission");
+
+        lostGPSSrv_ = nh.advertiseService("/missions_gui/lost_gps", &MARBLE_vis::lostGPSService, this);
 
         currentClicked_ = new Marble::GeoDataPlacemark("Clicked");
         place_ = new Marble::GeoDataPlacemark("Pose");
@@ -465,18 +466,21 @@ void MARBLE_vis::keyPressEvent(QKeyEvent *_event){
 
 //---------------------------------------------------------------------------------------------------------------------
 void MARBLE_vis::updatePose(){
+    
+    if(!lostGPS_){
+        objectLockPose_.lock();
+        ui->lineEdit_p1->setText(QString::number(latUAV_));
+        ui->lineEdit_p2->setText(QString::number(lonUAV_));
+        ui->lineEdit_p3->setText(QString::number(altUAV_));
+        ui->lineEdit_ngps->setText(QString::number(nGPS_));
+        objectLockPose_.unlock();
+    
 
-    objectLockPose_.lock();
-    ui->lineEdit_p1->setText(QString::number(latUAV_));
-    ui->lineEdit_p2->setText(QString::number(lonUAV_));
-    ui->lineEdit_p3->setText(QString::number(altUAV_));
-    ui->lineEdit_ngps->setText(QString::number(nGPS_));
-    objectLockPose_.unlock();
+        place_->setCoordinate(lonUAV_, latUAV_, altUAV_, Marble::GeoDataCoordinates::Degree);
 
-    place_->setCoordinate(lonUAV_, latUAV_, altUAV_, Marble::GeoDataCoordinates::Degree);
-
-    // Update the document MarbleWidget's tree model
-    mapWidget_->model()->treeModel()->updateFeature(place_);
+        // Update the document MarbleWidget's tree model
+        mapWidget_->model()->treeModel()->updateFeature(place_);
+    }
 
 }
 
@@ -488,6 +492,26 @@ void MARBLE_vis::CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg){
     lonUAV_ = _msg->longitude;
     altUAV_ = _msg->altitude;
     objectLockPose_.unlock();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool MARBLE_vis::lostGPSService(std_srvs::SetBool::Request &_req, std_srvs::SetBool::Response &_res){
+    
+    if(_req.data){
+        lostGPS_ = true;
+
+        objectLockPose_.lock();
+        ui->lineEdit_p1->setText("LOST");
+        ui->lineEdit_p2->setText("LOST");
+        ui->lineEdit_p3->setText("LOST");
+        ui->lineEdit_ngps->setText("LOST");
+        objectLockPose_.unlock();
+    }else{
+        lostGPS_ = false;
+    }
+
+    _res.success = true;
+    
 }
 
 #endif

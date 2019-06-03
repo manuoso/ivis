@@ -152,7 +152,7 @@ class UAV_control : public QMainWindow{
 
         ros::Publisher velocityPub_, positionPub_;
         ros::Subscriber poseGPSSub_, poseLocalSub_, poseVelSub_, poseRCSub_, modeSub_, flyStatusSub_, nBatSub_, djiConStaSub_;
-        ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_, recoverControlReq_;
+        ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_, recoverControlReq_, lostGPSReq_;
 
         std::thread *sendThread_, *telemThread_, *buttonThread;
         std::mutex objectLockGPS_, objectLockLocal_, objectLockVel_, objectLockRC_, objectLockBat_, objectLockMode_, objectLockFS_, objectLockDJICS_;
@@ -161,6 +161,9 @@ class UAV_control : public QMainWindow{
 
         bool stopAll_ = false;
         bool stopSend_ = false;
+
+        bool lostGPS_ = false;
+        float homeX_, homeY_, homeZ_;
 
         xyz_data velocity_, position_;
         geometry_msgs::TwistStamped msgVelocity_;
