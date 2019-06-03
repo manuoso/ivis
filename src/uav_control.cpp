@@ -93,7 +93,7 @@ UAV_control::~UAV_control(){
 //---------------------------------------------------------------------------------------------------------------------
 void UAV_control::takeoffUAV(){
 
-    std::thread takeoffThread = std::thread([&]{
+    buttonThread = new std::thread([&]{
         std_srvs::SetBool srv;
         srv.request.data = true;
         
@@ -117,7 +117,7 @@ void UAV_control::takeoffUAV(){
 //---------------------------------------------------------------------------------------------------------------------
 void UAV_control::landUAV(){
 
-    std::thread landThread = std::thread([&]{    
+    buttonThread = new std::thread([&]{  
         std_srvs::SetBool srv;
         srv.request.data = true;
         

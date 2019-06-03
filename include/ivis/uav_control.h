@@ -151,7 +151,7 @@ class UAV_control : public QMainWindow{
         ros::Subscriber poseGPSSub_, poseLocalSub_, poseVelSub_, poseRCSub_, modeSub_, flyStatusSub_, nBatSub_, djiConStaSub_;
         ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_, recoverControlReq_;
 
-        std::thread *sendThread_, *telemThread_;
+        std::thread *sendThread_, *telemThread_, *buttonThread;
         std::mutex objectLockGPS_, objectLockLocal_, objectLockVel_, objectLockRC_, objectLockBat_, objectLockMode_, objectLockFS_, objectLockDJICS_;
         
         std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;	
