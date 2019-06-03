@@ -47,6 +47,8 @@ UAV_control::UAV_control(QWidget *parent) :
         connect(ui->stopVel, SIGNAL(clicked()), this, SLOT(stopVelocityUAV()));
         connect(ui->recCont, SIGNAL(clicked()), this, SLOT(recoverControlUAV()));
 
+        connect(ui->gotohome, SIGNAL(clicked()), this, SLOT(goToHomeUAV()));
+
         connect(this, &UAV_control::telemChanged , this, &UAV_control::updateTelem);
 
         ros::NodeHandle nh;
@@ -274,6 +276,19 @@ void UAV_control::recoverControlUAV(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+void UAV_control::goToHomeUAV(){
+
+    msgPosition_.header.stamp = ros::Time::now();
+    msgPosition_.pose.position.x = 0.0;
+    msgPosition_.pose.position.y = 0.0;
+    msgPosition_.pose.position.z = 2;
+
+    type_ = "gotohome";
+    sendThread_ = new std::thread(&UAV_control::sendThread, this);
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 // PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -287,6 +302,9 @@ void UAV_control::sendThread(){
             positionPub_.publish(msgPosition_);
         }else if(type_ == "velocity"){
             velocityPub_.publish(msgVelocity_);
+        }else if(type_ == "gotohome"){
+            positionPub_.publish(msgPosition_);
+            stopSend_ = true;
         }else{
             std::cout << "Send thread in unrecognized State" << std::endl;
         }

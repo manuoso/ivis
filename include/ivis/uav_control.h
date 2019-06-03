@@ -104,6 +104,9 @@ class UAV_control : public QMainWindow{
 
         /// Method for recover control from manual of the UAV
         void recoverControlUAV();
+        
+        /// Method for go to Home the UAV
+        void goToHomeUAV();
 
     private:
         /// Send it by ROS Publishers
