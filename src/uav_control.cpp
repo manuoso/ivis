@@ -106,7 +106,11 @@ void UAV_control::takeoffUAV(){
         }else{
             std::cout << "Failed to call service of TAKE OFF" << std::endl;
         }
+
+        ui->takeoff->setEnabled(true);
     });
+
+    ui->takeoff->setEnabled(false);
 
 }
 
@@ -126,7 +130,11 @@ void UAV_control::landUAV(){
         }else{
             std::cout << "Failed to call service of LAND" << std::endl;
         }
+
+        ui->land->setEnabled(true);
     });
+
+    ui->land->setEnabled(false);
 
 }
 
