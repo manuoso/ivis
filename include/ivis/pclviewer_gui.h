@@ -45,6 +45,7 @@
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/conversions.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include <vtkRenderWindow.h>
 #include <boost/foreach.hpp>
@@ -84,6 +85,10 @@ signals:
     /// Signal that warns that there is a change in qvtk widget and update it
     void qvtkChanged();
 
+private slots:
+    /// Method that reset the visualization of the GUI
+    void resetGUI();
+
 private:
     /// Method for visualize a change of pose from a topic of ROS
     void CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg);
@@ -106,7 +111,7 @@ private:
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_;
     PointCloudT1::Ptr cloudT1_, cloudT1Filtered_;
-    PointCloudT2::Ptr cloudT2_, cloudT2Filtered_;
+    PointCloudT2::Ptr cloudT2_, cloudT2Filtered_, cloudMap_;
     pcl::PolygonMesh untransformedUav_;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;

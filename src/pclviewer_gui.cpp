@@ -42,11 +42,11 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
 
         connect(this, &PCLViewer_gui::updateGUIChanged , this, &PCLViewer_gui::updateGUI);
         connect(this, &PCLViewer_gui::qvtkChanged , this, &PCLViewer_gui::updateQVTK);
+        connect(ui->reset, SIGNAL(clicked()), this, SLOT(resetGUI()));
 
-        std::ifstream rawFile("/config/config_pcl.json");
+        std::ifstream rawFile("src/ivis/config/config_pcl.json");
         if (!rawFile.is_open()) {
             std::cout << "Error opening config file" << std::endl;
-            return false;
         }
 
         std::stringstream strStream;
@@ -55,7 +55,6 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
 
         if(configFile_.Parse(json.c_str()).HasParseError()){
             std::cout << "Error parsing json" << std::endl;
-            return false;
         }
 
         nameCallbackUAV_ = configFile_["callback_uav"].GetString();
@@ -131,6 +130,44 @@ PCLViewer_gui::~PCLViewer_gui()
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+// PRIVATE SLOTS
+//---------------------------------------------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------------------------------------------
+void PCLViewer_gui::resetGUI(){
+
+    viewer_.reset(new pcl::visualization::PCLVisualizer("viewer", false));
+    viewer_->setBackgroundColor(0.6, 0.6, 0.6);
+    ui->qvtkWidget->SetRenderWindow(viewer_->getRenderWindow());
+    viewer_->setupInteractor(ui->qvtkWidget->GetInteractor(), ui->qvtkWidget->GetRenderWindow());
+    emit qvtkChanged();
+
+    if(pathModelPose_ != ""){
+        if(typePoint_ == "PointXYZ"){
+            PointCloudT1::Ptr cloudUAV;
+            cloudUAV.reset (new PointCloudT1);
+            pcl::fromPCLPointCloud2(untransformedUav_.cloud, *cloudUAV);
+            viewer_->addPointCloud(cloudUAV, "uav_pose");
+        }else if(typePoint_ == "PointXYZRGB"){
+            PointCloudT2::Ptr cloudUAV;
+            cloudUAV.reset (new PointCloudT2);
+            pcl::fromPCLPointCloud2(untransformedUav_.cloud, *cloudUAV);
+            for(size_t i = 0; i < cloudUAV->points.size(); i++){
+                cloudUAV->points[i].r = 0;
+                cloudUAV->points[i].g = 0;
+                cloudUAV->points[i].b = 255;
+            }
+            viewer_->addPointCloud(cloudUAV, "uav_pose");
+        }
+        emit qvtkChanged();
+    }
+
+    cont_ = 0; 
+    contPointcloud_ = 0;
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 // PRIVATE
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -138,9 +175,9 @@ PCLViewer_gui::~PCLViewer_gui()
 void PCLViewer_gui::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg){
 
     objectLockPose_.lock();
-    pose_.x = _msg->x;
-    pose_.y = _msg->y;
-    pose_.z = _msg->z;
+    pose_.x = _msg->pose.position.x;
+    pose_.y = _msg->pose.position.y;
+    pose_.z = _msg->pose.position.z;
     pose_.r = 0;
     pose_.g = 1;
     pose_.b = 0;
@@ -167,7 +204,19 @@ void PCLViewer_gui::CallbackUAV(const geometry_msgs::PoseStamped::ConstPtr& _msg
 void PCLViewer_gui::CallbackPointcloud(const sensor_msgs::PointCloud2::ConstPtr& _msg){
 
     idPointcloud_ = "point_cloud" + std::to_string(contPointcloud_);
-    viewer_->addPointCloud(_msg, idPointcloud_);
+
+    pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2; 
+    cloudMap_.reset (new PointCloudT2);
+
+    pcl_conversions::toPCL(*_msg, *cloud);
+    pcl::fromPCLPointCloud2(*cloud, *cloudMap_);
+
+    for(size_t i = 0; i < cloudMap_->points.size(); i++){
+        cloudMap_->points[i].r = 87;
+        cloudMap_->points[i].g = 35;
+        cloudMap_->points[i].b = 100;
+    }
+    viewer_->addPointCloud(cloudMap_, idPointcloud_);
 
     contPointcloud_++;
     emit qvtkChanged();

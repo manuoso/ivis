@@ -2,7 +2,7 @@
 	"callback_uav":"/dji_telem/local_position",
 	"callback_pose":"/ORB_SLAM/pose",
 	"callback_pointcloud":"/ORB_SLAM/map",
-	"path_model":"/home/apollo/programming/catkin_ivis/src/ivis/uav_models/aquiles.stl",
+	"path_model":"/home/aphrodite/programming/catkin_ivis/src/ivis/uav_models/aquiles.stl",
 	"type_model": "STL",
 	"type_point": "PointXYZRGB"
 }
