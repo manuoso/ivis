@@ -77,6 +77,9 @@ if(BUILD_PCL)
 	else()
 		MESSAGE( FATAL_ERROR "Couldnt Add PCL and/or it's dependencies")
 	endif()
+
+	# Load rapidjson
+	find_package(RapidJSON REQUIRED)
 endif()
 
 #########################################
@@ -157,6 +160,9 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${QT5_LIBRARIES})
 if(BUILD_PCL)	
 	target_include_directories(${PROJECT_NAME} PUBLIC ${PCL_INCLUDE_DIRS})
 	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${PCL_LIBRARIES})
+
+	target_include_directories(${PROJECT_NAME} PUBLIC ${RAPIDJSON_INCLUDE_DIRS})
+	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${RAPIDJSON_LIBRARIES})
 endif()
 
 if(BUILD_MARBLE)

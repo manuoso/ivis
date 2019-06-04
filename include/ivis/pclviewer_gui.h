@@ -51,7 +51,9 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/Point.h>
+#include <sensor_msgs/PointCloud2.h>
+
+#include <rapidjson/document.h>
 
 
 typedef pcl::PointXYZ PointT1;
@@ -84,14 +86,13 @@ signals:
 
 private:
     /// Method for visualize a change of pose from a topic of ROS
-    /// \param _msg: data receive to update pose
     void CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg);
 
-    /// Method that receive new points for the point cloud
-    void CallbackPoint(const geometry_msgs::Point::ConstPtr& _msg);
+    /// Method for visualize a change of pose from a topic of ROS
+    void CallbackUAV(const geometry_msgs::PoseStamped::ConstPtr& _msg);
 
-    /// Method that receive a pointcloud from a bridge
-    void CallbackPointcloud(const PointCloudT2::ConstPtr& _msg);
+    /// Method that receive a pointcloud
+    void CallbackPointcloud(const sensor_msgs::PointCloud2::ConstPtr& _msg);
 
     /// Method that update PCL GUI visualizer
     void updateGUI();   
@@ -101,6 +102,7 @@ private:
 
 private:
     Ui::PCLViewer_gui *ui;
+    rapidjson::Document configFile_;
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer_;
     PointCloudT1::Ptr cloudT1_, cloudT1Filtered_;
@@ -109,25 +111,25 @@ private:
 
     std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;
     
-    ros::Subscriber poseSub_, pointcloudSub_, pointSub_;
+    ros::Subscriber poseSub_, pointcloudSub_, uavSub_;
 
     std::string typePoint_ = "";
     std::string nameCallbackPose_ = "";
     std::string nameCallbackPointcloud_ = "";
-    std::string nameCallbackPoint_ = "";
+    std::string nameCallbackUAV_ = "";
     std::string typeModelPose_ = "";
     std::string pathModelPose_ = "";
 
-    PointT2 point_, uavPoint_, line_vector_[3];
+    PointT2 pose_, uavPoint_, line_vector_[3];
     double radSphere_ = 0.1;
-    std::string idUavSphere_ = "", idSphere_ = "", idPointcloud_ = "", uavIdLine_ = "";
+    std::string idUavSphere_ = "", idPoseSphere_ = "", idPointcloud_ = "", uavIdLine_ = "";
     int cont_ = 0, contPointcloud_ = 0;
     bool firstTime_ = true;
  
     float poseX_ = 0.0, poseY_ = 0.0, poseZ_ = 0.0, poseOX_ = 0.0, poseOY_ = 0.0, poseOZ_ = 0.0, poseOW_ = 1.0;
 
     std::thread *updateThread_;
-    std::mutex objectLockPose_, objectLockPointcloud_, objectLockPoint_;
+    std::mutex objectLockPose_, objectLockPointcloud_, objectLockUAV_;
     bool stopAll_ = false;
 
 };

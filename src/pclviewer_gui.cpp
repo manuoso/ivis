@@ -43,14 +43,28 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
         connect(this, &PCLViewer_gui::updateGUIChanged , this, &PCLViewer_gui::updateGUI);
         connect(this, &PCLViewer_gui::qvtkChanged , this, &PCLViewer_gui::updateQVTK);
 
-        // Config
-        nameCallbackPose_ = "/dji_telem/local_position";
-        nameCallbackPointcloud_ = "/pointcloud_pub"; 
-        nameCallbackPoint_ = "/point_pub";  
+        std::ifstream rawFile("/config/config_pcl.json");
+        if (!rawFile.is_open()) {
+            std::cout << "Error opening config file" << std::endl;
+            return false;
+        }
 
-        pathModelPose_ = "/home/apollo/programming/catkin_ivis/src/ivis/uav_models/aquiles.stl";
-        typeModelPose_ = "STL";
-        typePoint_ = "PointXYZRGB";
+        std::stringstream strStream;
+        strStream << rawFile.rdbuf(); //read the file
+        std::string json = strStream.str(); //str holds the content of the file
+
+        if(configFile_.Parse(json.c_str()).HasParseError()){
+            std::cout << "Error parsing json" << std::endl;
+            return false;
+        }
+
+        nameCallbackUAV_ = configFile_["callback_uav"].GetString();
+        nameCallbackPose_ = configFile_["callback_pose"].GetString();
+        nameCallbackPointcloud_ = configFile_["callback_pointcloud"].GetString();
+
+        pathModelPose_ = configFile_["path_model"].GetString();
+        typeModelPose_ = configFile_["type_model"].GetString();
+        typePoint_ = configFile_["type_point"].GetString();
 
         // Set up the QVTK window
         viewer_.reset(new pcl::visualization::PCLVisualizer("viewer", false));
@@ -91,8 +105,8 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
 
         ros::NodeHandle nh;
         poseSub_ = nh.subscribe(nameCallbackPose_, 1, &PCLViewer_gui::CallbackPose, this);
-        pointSub_ = nh.subscribe(nameCallbackPoint_, 1, &PCLViewer_gui::CallbackPoint, this);
-        pointcloudSub_ = nh.subscribe<PointCloudT2>(nameCallbackPointcloud_, 1, &PCLViewer_gui::CallbackPointcloud, this);
+        uavSub_ = nh.subscribe(nameCallbackUAV_, 1, &PCLViewer_gui::CallbackUAV, this);
+        pointcloudSub_ = nh.subscribe(nameCallbackPointcloud_, 1, &PCLViewer_gui::CallbackPointcloud, this);
 
         lastTimePose_ = std::chrono::high_resolution_clock::now();
 
@@ -122,8 +136,22 @@ PCLViewer_gui::~PCLViewer_gui()
 
 //---------------------------------------------------------------------------------------------------------------------
 void PCLViewer_gui::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg){
-    
+
     objectLockPose_.lock();
+    pose_.x = _msg->x;
+    pose_.y = _msg->y;
+    pose_.z = _msg->z;
+    pose_.r = 0;
+    pose_.g = 1;
+    pose_.b = 0;
+    objectLockPose_.unlock();
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void PCLViewer_gui::CallbackUAV(const geometry_msgs::PoseStamped::ConstPtr& _msg){
+    
+    objectLockUAV_.lock();
     poseX_ = _msg->pose.position.x;
     poseY_ = _msg->pose.position.y;
     poseZ_ = _msg->pose.position.z;
@@ -131,27 +159,12 @@ void PCLViewer_gui::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _ms
     poseOY_ = _msg->pose.orientation.y;
     poseOZ_ = _msg->pose.orientation.z;
     poseOW_ = _msg->pose.orientation.w;
-    objectLockPose_.unlock();
+    objectLockUAV_.unlock();
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void PCLViewer_gui::CallbackPoint(const geometry_msgs::Point::ConstPtr& _msg){
-
-    objectLockPoint_.lock();
-    point_.x = _msg->x;
-    point_.y = _msg->y;
-    point_.z = _msg->z;
-    point_.r = 0;
-    point_.g = 1;
-    point_.b = 0;
-    objectLockPoint_.unlock();
-
-}
-
-
-//---------------------------------------------------------------------------------------------------------------------
-void PCLViewer_gui::CallbackPointcloud(const PointCloudT2::ConstPtr& _msg){
+void PCLViewer_gui::CallbackPointcloud(const sensor_msgs::PointCloud2::ConstPtr& _msg){
 
     idPointcloud_ = "point_cloud" + std::to_string(contPointcloud_);
     viewer_->addPointCloud(_msg, idPointcloud_);
@@ -164,7 +177,7 @@ void PCLViewer_gui::CallbackPointcloud(const PointCloudT2::ConstPtr& _msg){
 //---------------------------------------------------------------------------------------------------------------------
 void PCLViewer_gui::updateGUI(){
     
-    objectLockPose_.lock();
+    objectLockUAV_.lock();
     Eigen::Quaternionf q;
     q.x() = poseOX_;
     q.y() = poseOY_;
@@ -184,7 +197,7 @@ void PCLViewer_gui::updateGUI(){
     uavPoint_.r = 1;
     uavPoint_.g = 0;
     uavPoint_.b = 0;
-    objectLockPose_.unlock();
+    objectLockUAV_.unlock();
 
     Eigen::Affine3f transform(pose);
     viewer_->updatePointCloudPose("uav_pose", transform);
@@ -204,20 +217,20 @@ void PCLViewer_gui::updateGUI(){
         line_vector_[0] = line_vector_[1];
     }
 
-    objectLockPoint_.lock();
-    PointT2 newPoint = point_;
-    objectLockPoint_.unlock();
+    objectLockPose_.lock();
+    PointT2 newPose = pose_;
+    objectLockPose_.unlock();
     
-    idSphere_ = "sphere" + std::to_string(cont_);
-    viewer_->addSphere(newPoint, radSphere_, newPoint.r, newPoint.g, newPoint.b, idSphere_);
+    idPoseSphere_ = "sphere" + std::to_string(cont_);
+    viewer_->addSphere(newPose, radSphere_, newPose.r, newPose.g, newPose.b, idPoseSphere_);
 
     ui->lineEdit_lp1->setText(QString::number(uavPoint_.x));
     ui->lineEdit_lp2->setText(QString::number(uavPoint_.y));
     ui->lineEdit_lp3->setText(QString::number(uavPoint_.z));
 
-    ui->lineEdit_tp1->setText(QString::number(newPoint.x));
-    ui->lineEdit_tp2->setText(QString::number(newPoint.y));
-    ui->lineEdit_tp3->setText(QString::number(newPoint.z));
+    ui->lineEdit_tp1->setText(QString::number(newPose.x));
+    ui->lineEdit_tp2->setText(QString::number(newPose.y));
+    ui->lineEdit_tp3->setText(QString::number(newPose.z));
 
     cont_++;
     emit qvtkChanged();
