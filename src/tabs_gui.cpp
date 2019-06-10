@@ -49,7 +49,7 @@ TABS_gui::TABS_gui(QWidget *parent) :
             tabWidget_->addTab(pclVis_, "PCL GUI");
         #endif
 
-        resize(1150, 800);
+        resize(1200, 900);
 
         setWindowTitle(tr("Tabs GUI"));
 

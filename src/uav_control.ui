@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>880</width>
-    <height>743</height>
+    <width>907</width>
+    <height>746</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>858</width>
-           <height>699</height>
+           <width>885</width>
+           <height>702</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
@@ -51,7 +51,7 @@
              <widget class="QLineEdit" name="lineEdit_mode">
               <property name="maximumSize">
                <size>
-                <width>220</width>
+                <width>250</width>
                 <height>30</height>
                </size>
               </property>

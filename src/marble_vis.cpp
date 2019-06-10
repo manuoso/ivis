@@ -39,11 +39,11 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
 
         ui->checkBox_alt->setChecked(false);
         ui->checkBox_clicked->setChecked(false);
-        ui->sendWP->setVisible(0);
-        ui->startWP->setVisible(0);
-        ui->stopWP->setVisible(0);
-        ui->pauseWP->setVisible(0);
-        ui->resumeWP->setVisible(0);
+        ui->sendWP->setEnabled(false);
+        ui->startWP->setEnabled(false);
+        ui->stopWP->setEnabled(false);
+        ui->pauseWP->setEnabled(false);
+        ui->resumeWP->setEnabled(false);
 
         connect(ui->center, SIGNAL(clicked()), this, SLOT(centerUAV()));
         connect(ui->deleteWP, SIGNAL(clicked()), this, SLOT(deleteWaypointList()));
@@ -290,7 +290,11 @@ void MARBLE_vis::deleteWaypointList(){
 void MARBLE_vis::cleanWaypointList(){
     
     visualizeMission_ = false;
-    ui->sendWP->setVisible(0);
+    ui->sendWP->setEnabled(false);
+    ui->startWP->setEnabled(false);
+    ui->stopWP->setEnabled(false);
+    ui->pauseWP->setEnabled(false);
+    ui->resumeWP->setEnabled(false);
 
     // Clear vector
     waypoints_.clear();
@@ -310,7 +314,7 @@ void MARBLE_vis::visualizeMissionList(){
     
     visualizeMission_ = true;
 
-    ui->sendWP->setVisible(1);
+    ui->sendWP->setEnabled(true);
 
 }
 
@@ -318,7 +322,7 @@ void MARBLE_vis::visualizeMissionList(){
 void MARBLE_vis::sendWaypointList(){
     
     QString qTypeMission = ui->lineEdit_type->text();
-    std::string typeMission = qTypeMission.toStdString();;
+    std::string typeMission = qTypeMission.toStdString();
     
     ivis::configMission srvConfig;
     srvConfig.request.type = typeMission;
@@ -364,10 +368,10 @@ void MARBLE_vis::sendWaypointList(){
         std::cout << "Failed to call service of CONFIG MISSION" << std::endl;
     }
 
-    ui->startWP->setVisible(1);
-    ui->stopWP->setVisible(1);
-    ui->pauseWP->setVisible(1);
-    ui->resumeWP->setVisible(1);
+    ui->startWP->setEnabled(true);
+    ui->stopWP->setEnabled(true);
+    ui->pauseWP->setEnabled(true);
+    ui->resumeWP->setEnabled(true);
 
 }
 
@@ -511,6 +515,8 @@ bool MARBLE_vis::lostGPSService(std_srvs::SetBool::Request &_req, std_srvs::SetB
     }
 
     _res.success = true;
+
+    return true;
     
 }
 
