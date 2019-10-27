@@ -43,7 +43,7 @@
                </size>
               </property>
               <property name="text">
-               <string>CH4</string>
+               <string>CH4 (Throttle)</string>
               </property>
              </widget>
             </item>
@@ -134,7 +134,7 @@
                </size>
               </property>
               <property name="text">
-               <string>CH3</string>
+               <string>CH3 (Yaw)</string>
               </property>
              </widget>
             </item>
@@ -407,7 +407,7 @@
                </size>
               </property>
               <property name="text">
-               <string>Num GPS:</string>
+               <string>Signal GPS:</string>
               </property>
              </widget>
             </item>
@@ -601,7 +601,7 @@
                </size>
               </property>
               <property name="text">
-               <string>CH2</string>
+               <string>CH2 (Roll)</string>
               </property>
              </widget>
             </item>
@@ -669,7 +669,7 @@
                </size>
               </property>
               <property name="text">
-               <string>CH1</string>
+               <string>CH1 (Pitch)</string>
               </property>
              </widget>
             </item>
