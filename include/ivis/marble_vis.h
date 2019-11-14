@@ -123,6 +123,9 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 
         /// Method that resume the list of waypoints sended through a service of ROS
         void resumeWaypointList();
+
+        /// Method that send go to move with GPS through a service of ROS
+        void sendMoveGPS();
     
     protected:
         /// Method to capture a key press on the keyboard
@@ -148,7 +151,7 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         std::vector<Marble::GeoDataDocument*> documentMission_;
 
         ros::Subscriber poseSub_;
-        ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_, pauseMissionReq_, resumeMissionReq_;
+        ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_, pauseMissionReq_, resumeMissionReq_, positionGPSReq_;
         ros::ServiceServer lostGPSSrv_;
 
         std::thread *poseThread_;

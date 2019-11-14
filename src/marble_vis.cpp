@@ -54,6 +54,8 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         connect(ui->stopWP, SIGNAL(clicked()), this, SLOT(stopWaypointList()));
         connect(ui->pauseWP, SIGNAL(clicked()), this, SLOT(pauseWaypointList()));
         connect(ui->resumeWP, SIGNAL(clicked()), this, SLOT(resumeWaypointList()));
+        connect(ui->moveGPS, SIGNAL(clicked()), this, SLOT(sendMoveGPS()));
+
         connect(this, &MARBLE_vis::positionChanged , this, &MARBLE_vis::updatePose);
         connect(this, &MARBLE_vis::addPoint , this, &MARBLE_vis::addPointList);
 
@@ -76,6 +78,7 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         stopMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/stop_mission");
         pauseMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/pause_mission");
         resumeMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/resume_mission");
+        positionGPSReq_ = nh.serviceClient<ivis::configMission>("/dji_control/go_position_gps");
 
         lostGPSSrv_ = nh.advertiseService("/missions_gui/lost_gps", &MARBLE_vis::lostGPSService, this);
 
@@ -444,6 +447,60 @@ void MARBLE_vis::resumeWaypointList(){
     }else{
         std::cout << "Failed to call service of RESUME MISSION" << std::endl;   
     }
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::sendMoveGPS(){
+    
+    QString qTypeMission = ui->lineEdit_type->text();
+    std::string typeMission = qTypeMission.toStdString();
+    
+    ivis::configMission srvConfig;
+    srvConfig.request.type = typeMission;
+
+    sensor_msgs::NavSatFix wp;
+    wp.latitude = waypoints_[0].second[0];
+    wp.longitude = waypoints_[0].second[1];
+    wp.altitude = waypoints_[0].second[2];
+    srvConfig.request.waypoint.push_back(wp);
+
+    srvConfig.request.radius = radiusHP_;
+    
+    QString qYawMode = ui->lineEdit_yawMode->text();
+    double yawMode = qYawMode.toInt(); 
+
+    QString qMaxVel = ui->lineEdit_maxVel->text();
+    double maxVel = qMaxVel.toDouble(); 
+
+    QString qIdelVel = ui->lineEdit_idleVel->text();
+    double idleVel = qIdelVel.toDouble(); 
+
+    int clockwiseMode = 0;
+    if(ui->checkBox_clockwise->isChecked()){
+        clockwiseMode = 1; 
+    }else{
+        clockwiseMode = 0;
+    }
+    
+    srvConfig.request.yawMode = yawMode;
+    srvConfig.request.clockwiseMode = clockwiseMode;
+    srvConfig.request.maxVel = maxVel;
+    srvConfig.request.idleVel = idleVel;
+    
+    if(positionGPSReq_.call(srvConfig)){
+        if(srvConfig.response.success){
+            std::cout << "Service of MOVE GPS success" << std::endl;
+        }else{
+            std::cout << "Service of MOVE GPS failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of MOVE GPS" << std::endl;
+    }
+
+    ui->stopWP->setEnabled(true);
+    ui->pauseWP->setEnabled(true);
+    ui->resumeWP->setEnabled(true);
 
 }
 
