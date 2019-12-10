@@ -22,7 +22,7 @@
 cmake_minimum_required (VERSION 3.8 FATAL_ERROR)
 project(ivis VERSION 0.1 LANGUAGES C CXX)
 
-set(BUILD_PCL OFF)
+set(BUILD_PCL ON)
 
 set(BUILD_MARBLE ON)
 

@@ -57,8 +57,8 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
             std::cout << "Error parsing json" << std::endl;
         }
 
-        nameCallbackUAV_ = configFile_["callback_uav"].GetString();
-        nameCallbackPose_ = configFile_["callback_pose"].GetString();
+        nameCallbackUAV_        = configFile_["callback_uav"].GetString();
+        nameCallbackPoseVO_     = configFile_["callback_pose"].GetString();
         nameCallbackPointcloud_ = configFile_["callback_pointcloud"].GetString();
 
         pathModelPose_ = configFile_["path_model"].GetString();
@@ -103,7 +103,7 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
         }
 
         ros::NodeHandle nh;
-        poseSub_ = nh.subscribe(nameCallbackPose_, 1, &PCLViewer_gui::CallbackPose, this);
+        poseVOSub_ = nh.subscribe(nameCallbackPoseVO_, 1, &PCLViewer_gui::CallbackPoseVO, this);
         uavSub_ = nh.subscribe(nameCallbackUAV_, 1, &PCLViewer_gui::CallbackUAV, this);
         pointcloudSub_ = nh.subscribe(nameCallbackPointcloud_, 1, &PCLViewer_gui::CallbackPointcloud, this);
 
@@ -172,20 +172,22 @@ void PCLViewer_gui::resetGUI(){
 //---------------------------------------------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------------------------------------------
-void PCLViewer_gui::CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg){
+// Obtained from SLAM
+void PCLViewer_gui::CallbackPoseVO(const geometry_msgs::PoseStamped::ConstPtr& _msg){
 
     objectLockPose_.lock();
-    pose_.x = _msg->pose.position.x;
-    pose_.y = _msg->pose.position.y;
-    pose_.z = _msg->pose.position.z;
-    pose_.r = 0;
-    pose_.g = 1;
-    pose_.b = 0;
+    poseVO_.x = _msg->pose.position.x;
+    poseVO_.y = _msg->pose.position.y;
+    poseVO_.z = _msg->pose.position.z;
+    poseVO_.r = 0;
+    poseVO_.g = 1;
+    poseVO_.b = 0;
     objectLockPose_.unlock();
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+// Obtained from DJI topics
 void PCLViewer_gui::CallbackUAV(const geometry_msgs::PoseStamped::ConstPtr& _msg){
     
     objectLockUAV_.lock();
@@ -212,7 +214,7 @@ void PCLViewer_gui::CallbackPointcloud(const sensor_msgs::PointCloud2::ConstPtr&
     pcl::fromPCLPointCloud2(*cloud, *cloudMap_);
 
     for(size_t i = 0; i < cloudMap_->points.size(); i++){
-        cloudMap_->points[i].r = 87;
+        cloudMap_->points[i].r = 87; // pointcloud color
         cloudMap_->points[i].g = 35;
         cloudMap_->points[i].b = 100;
     }
@@ -267,7 +269,7 @@ void PCLViewer_gui::updateGUI(){
     }
 
     objectLockPose_.lock();
-    PointT2 newPose = pose_;
+    PointT2 newPose = poseVO_; // visual odometry pose
     objectLockPose_.unlock();
     
     idPoseSphere_ = "sphere" + std::to_string(cont_);

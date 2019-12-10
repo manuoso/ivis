@@ -91,7 +91,7 @@ private slots:
 
 private:
     /// Method for visualize a change of pose from a topic of ROS
-    void CallbackPose(const geometry_msgs::PoseStamped::ConstPtr& _msg);
+    void CallbackPoseVO(const geometry_msgs::PoseStamped::ConstPtr& _msg);
 
     /// Method for visualize a change of pose from a topic of ROS
     void CallbackUAV(const geometry_msgs::PoseStamped::ConstPtr& _msg);
@@ -116,22 +116,22 @@ private:
 
     std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;
     
-    ros::Subscriber poseSub_, pointcloudSub_, uavSub_;
+    ros::Subscriber poseVOSub_, pointcloudSub_, uavSub_;
 
     std::string typePoint_ = "";
-    std::string nameCallbackPose_ = "";
+    std::string nameCallbackPoseVO_ = "";
     std::string nameCallbackPointcloud_ = "";
     std::string nameCallbackUAV_ = "";
     std::string typeModelPose_ = "";
     std::string pathModelPose_ = "";
 
-    PointT2 pose_, uavPoint_, line_vector_[3];
+    PointT2 poseVO_, uavPoint_, line_vector_[3];
     double radSphere_ = 0.1;
     std::string idUavSphere_ = "", idPoseSphere_ = "", idPointcloud_ = "", uavIdLine_ = "";
     int cont_ = 0, contPointcloud_ = 0;
     bool firstTime_ = true;
  
-    float poseX_ = 0.0, poseY_ = 0.0, poseZ_ = 0.0, poseOX_ = 0.0, poseOY_ = 0.0, poseOZ_ = 0.0, poseOW_ = 1.0;
+    float poseX_ = 0.0, poseY_ = 0.0, poseZ_ = 0.0, poseOX_ = 0.0, poseOY_ = 0.0, poseOZ_ = 0.0, poseOW_ = 1.0; //Pose UAV
 
     std::thread *updateThread_;
     std::mutex objectLockPose_, objectLockPointcloud_, objectLockUAV_;

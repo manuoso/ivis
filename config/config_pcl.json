@@ -1,8 +1,8 @@
 {	
-	"callback_uav":"/dji_telem/local_position",
-	"callback_pose":"/ORB_SLAM/pose",
-	"callback_pointcloud":"/ORB_SLAM/map",
-	"path_model":"/home/aphrodite/programming/catkin_ivis/src/ivis/uav_models/aquiles.stl",
+	"callback_uav":"/inspector/pose",
+	"callback_pose":"/inspector/pose",
+	"callback_pointcloud":"/inspector/map",
+	"path_model":"/home/grvc/programming/ivis_ws/src/ivis/uav_models/aquiles.stl",
 	"type_model": "STL",
 	"type_point": "PointXYZRGB"
 }
