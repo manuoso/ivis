@@ -73,6 +73,7 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
         emit qvtkChanged();
         
         viewer_->resetCamera();
+        viewer_->registerPointPickingCallback(&PCLViewer_gui::pointPickingOccurred, *this);
 
         if(pathModelPose_ != ""){
             if(typeModelPose_ == "OBJ"){
@@ -103,9 +104,11 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
         }
 
         ros::NodeHandle nh;
-        poseVOSub_ = nh.subscribe(nameCallbackPoseVO_, 1, &PCLViewer_gui::CallbackPoseVO, this);
-        uavSub_ = nh.subscribe(nameCallbackUAV_, 1, &PCLViewer_gui::CallbackUAV, this);
-        pointcloudSub_ = nh.subscribe(nameCallbackPointcloud_, 1, &PCLViewer_gui::CallbackPointcloud, this);
+        poseVOSub_       = nh.subscribe(nameCallbackPoseVO_, 1, &PCLViewer_gui::CallbackPoseVO, this);
+        uavSub_          = nh.subscribe(nameCallbackUAV_, 1, &PCLViewer_gui::CallbackUAV, this);
+        pointcloudSub_   = nh.subscribe(nameCallbackPointcloud_, 1, &PCLViewer_gui::CallbackPointcloud, this);
+
+        vizClickedPoint_ = nh.advertise<geometry_msgs::PointStamped>("/ivis/ClickedPoint", 1);
 
         lastTimePose_ = std::chrono::high_resolution_clock::now();
 
@@ -290,6 +293,38 @@ void PCLViewer_gui::updateGUI(){
 //---------------------------------------------------------------------------------------------------------------------
 void PCLViewer_gui::updateQVTK(){
     ui->qvtkWidget->update();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void PCLViewer_gui::pointPickingOccurred(const pcl::visualization::PointPickingEvent &_event, void* _args){
+    int idx = _event.getPointIndex();
+    if(idx == -1){
+        return;
+    }
+
+    float x, y, z;
+    _event.getPoint(x, y, z);
+
+    geometry_msgs::PointStamped clickedPoint;
+    clickedPoint.header.stamp = ros::Time::now();
+    clickedPoint.header.frame_id = "map";
+    clickedPoint.point.x = x;
+    clickedPoint.point.y = y;
+    clickedPoint.point.z = z;
+    vizClickedPoint_.publish(clickedPoint);
+
+    // std::cout << "Position (" << x << ", " << y << ", " << z << ")" << std::endl;
+
+    std::string sSphere = "goalPoint_" + std::to_string(contSpheres_);
+    //std::cout << "sSphere: " << sSphere << std::endl;
+    if(typePoint_ == "PointXYZ"){
+        viewer_->addSphere(cloudMap_->points[idx], 1.0, 1, 0, 0, sSphere);
+        ui->qvtkWidget->update();
+    }else if(typePoint_ == "PointXYZRGB"){ //cloudMap_
+        viewer_->addSphere(cloudMap_->points[idx], 1.0, 1, 0, 0, sSphere);
+        ui->qvtkWidget->update();
+    }
+    contSpheres_++;
 }
 
 #endif

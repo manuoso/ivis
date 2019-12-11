@@ -52,6 +52,7 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PointStamped.h>
 #include <sensor_msgs/PointCloud2.h>
 
 #include <rapidjson/document.h>
@@ -105,6 +106,11 @@ private:
     /// Method that update QVTK widget in PCL GUI visualizer
     void updateQVTK();   
 
+    /// Method that capture x, y and z from a mouse clic
+    /// \param _event: x, y and z captured and other info
+    /// \param _args: args from picking
+    void pointPickingOccurred(const pcl::visualization::PointPickingEvent &_event, void* _args);
+
 private:
     Ui::PCLViewer_gui *ui;
     rapidjson::Document configFile_;
@@ -117,6 +123,7 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> lastTimePose_;
     
     ros::Subscriber poseVOSub_, pointcloudSub_, uavSub_;
+    ros::Publisher vizClickedPoint_;
 
     std::string typePoint_ = "";
     std::string nameCallbackPoseVO_ = "";
@@ -128,7 +135,7 @@ private:
     PointT2 poseVO_, uavPoint_, line_vector_[3];
     double radSphere_ = 0.1;
     std::string idUavSphere_ = "", idPoseSphere_ = "", idPointcloud_ = "", uavIdLine_ = "";
-    int cont_ = 0, contPointcloud_ = 0;
+    int cont_ = 0, contPointcloud_ = 0 , contSpheres_ = 0;
     bool firstTime_ = true;
  
     float poseX_ = 0.0, poseY_ = 0.0, poseZ_ = 0.0, poseOX_ = 0.0, poseOY_ = 0.0, poseOZ_ = 0.0, poseOW_ = 1.0; //Pose UAV
