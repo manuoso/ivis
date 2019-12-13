@@ -44,7 +44,7 @@ PCLViewer_gui::PCLViewer_gui(QWidget *parent) :
         connect(this, &PCLViewer_gui::qvtkChanged , this, &PCLViewer_gui::updateQVTK);
         connect(ui->reset, SIGNAL(clicked()), this, SLOT(resetGUI()));
 
-        std::ifstream rawFile("src/ivis/config/config_pcl.json");
+        std::ifstream rawFile("src/inspector/ivis/config/config_pcl.json");
         if (!rawFile.is_open()) {
             std::cout << "Error opening config file" << std::endl;
         }

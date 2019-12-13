@@ -2,7 +2,7 @@
 	"callback_uav":"/inspector/pose",
 	"callback_pose":"/inspector/pose",
 	"callback_pointcloud":"/inspector/map",
-	"path_model":"/home/grvc/programming/ivis_ws/src/ivis/uav_models/aquiles.stl",
+	"path_model":"/home/grvc/programming/catkin_ws/src/inspector/ivis/uav_models/aquiles.stl",
 	"type_model": "STL",
 	"type_point": "PointXYZRGB"
 }
