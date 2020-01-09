@@ -48,7 +48,8 @@ UAV_control::UAV_control(QWidget *parent) :
         connect(ui->recCont, SIGNAL(clicked()), this, SLOT(recoverControlUAV()));
 
         connect(ui->gotohome, SIGNAL(clicked()), this, SLOT(goToHomeUAV()));
-
+        connect(ui->stopgohome, SIGNAL(clicked()), this, SLOT(stopGoToHome()));
+        
         connect(this, &UAV_control::telemChanged , this, &UAV_control::updateTelem);
 
         ros::NodeHandle nh;
@@ -301,6 +302,7 @@ void UAV_control::goToHomeUAV(){
     ui->lineEdit_rg2->setText("LOST");
     ui->lineEdit_rg3->setText("LOST");
     ui->lineEdit_ngps->setText("LOST");
+    ui->lineEdit_sig->setText("LOST");
 
     homeX_ = 0.0;
     homeY_ = 0.0;
@@ -314,6 +316,33 @@ void UAV_control::goToHomeUAV(){
 
     type_ = "gotohome";
     sendThread_ = new std::thread(&UAV_control::sendThread, this);
+
+    ui->gotohome->setVisible(0);
+    ui->stopgohome->setVisible(1);
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void UAV_control::stopGoToHome(){
+
+    stopSend_ = true;
+    sendThread_->join();
+
+    std_srvs::SetBool srv;
+    srv.request.data = true;
+
+    if(emergencyBrakeReq_.call(srv)){
+        if(srv.response.success){
+            std::cout << "Service of EMERGENCY BRAKE success" << std::endl;
+        }else{
+            std::cout << "Service of EMERGENCY BRAKE failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of EMERGENCY BRAKE" << std::endl;
+    }
+
+    ui->gotohome->setVisible(1);
+    ui->stopgohome->setVisible(0);
 
 }
 
@@ -354,6 +383,7 @@ void UAV_control::updateTelem(){
         ui->lineEdit_rg2->setText(QString::number(poseGPSLon_));
         ui->lineEdit_rg3->setText(QString::number(poseGPSAlt_));
         ui->lineEdit_ngps->setText(QString::number(nGPS_));
+        ui->lineEdit_sig->setText(QString::number(sigGPS_));
         objectLockGPS_.unlock();
     }
     
@@ -398,7 +428,8 @@ void UAV_control::updateTelem(){
 void UAV_control::CallbackPoseGPS(const sensor_msgs::NavSatFix::ConstPtr& _msg){
 
     objectLockGPS_.lock();
-    nGPS_ = _msg->status.status;
+    nGPS_ = _msg->status.service;
+    sigGPS_ = _msg->status.status;
     poseGPSLat_ = _msg->latitude;
     poseGPSLon_ = _msg->longitude;
     poseGPSAlt_ = _msg->altitude;

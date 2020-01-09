@@ -108,6 +108,9 @@ class UAV_control : public QMainWindow{
         /// Method for go to Home the UAV
         void goToHomeUAV();
 
+        /// Method for stop go Home the UAV
+        void stopGoToHome();
+
     private:
         /// Send it by ROS Publishers
         void sendThread();
@@ -177,7 +180,7 @@ class UAV_control : public QMainWindow{
         double poseGPSLat_ = 0.0, poseGPSLon_ = 0.0, poseGPSAlt_ = 0.0;
         
         float batLevel = 0.0;
-        int nGPS_ = 0;
+        int nGPS_ = 0, sigGPS_ = 0;
         
         
 };

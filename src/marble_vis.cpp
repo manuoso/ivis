@@ -548,7 +548,7 @@ void MARBLE_vis::updatePose(){
 //---------------------------------------------------------------------------------------------------------------------
 void MARBLE_vis::CallbackPose(const sensor_msgs::NavSatFix::ConstPtr& _msg){
     objectLockPose_.lock();
-    nGPS_ = _msg->status.status;
+    nGPS_ = _msg->status.service;
     latUAV_ = _msg->latitude;
     lonUAV_ = _msg->longitude;
     altUAV_ = _msg->altitude;
