@@ -355,11 +355,19 @@ void MARBLE_vis::sendWaypointList(){
     }else{
         clockwiseMode = 0;
     }
+
+    int traceMode = 0;
+    if(ui->checkBox_traceMode->isChecked()){
+        traceMode = 1; 
+    }else{
+        traceMode = 0;
+    }
     
     srvConfig.request.yawMode = yawMode;
     srvConfig.request.clockwiseMode = clockwiseMode;
     srvConfig.request.maxVel = maxVel;
     srvConfig.request.idleVel = idleVel;
+    srvConfig.request.traceMode = traceMode;
     
     if(configMissionReq_.call(srvConfig)){
         if(srvConfig.response.success){
