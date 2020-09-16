@@ -42,6 +42,7 @@
 #include <ros/ros.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float64MultiArray.h>
+#include <std_msgs/UInt32MultiArray.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <sensor_msgs/NavSatFix.h> 
 #include <sensor_msgs/BatteryState.h> 
@@ -105,11 +106,11 @@ class UAV_control : public QMainWindow{
         /// Method for recover control from manual of the UAV
         void recoverControlUAV();
         
-        /// Method for go to Home the UAV
-        void goToHomeUAV();
+        /// Method for send PWM value to function channels DJI
+        void sendPWM();
 
-        /// Method for stop go Home the UAV
-        void stopGoToHome();
+        /// Method for stop PWM value to function channels DJI
+        void stopPWM();
 
     private:
         /// Send it by ROS Publishers
@@ -153,9 +154,9 @@ class UAV_control : public QMainWindow{
     private:
         Ui::UAV_control *ui;
 
-        ros::Publisher velocityPub_, positionPub_;
+        ros::Publisher velocityPub_, positionPub_, pwmPub_;
         ros::Subscriber poseGPSSub_, poseLocalSub_, poseVelSub_, poseRCSub_, modeSub_, flyStatusSub_, nBatSub_, djiConStaSub_;
-        ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_, recoverControlReq_, lostGPSReq_;
+        ros::ServiceClient landReq_, takeoffReq_, emergencyBrakeReq_, recoverControlReq_;
 
         std::thread *sendThread_, *telemThread_, *buttonThread;
         std::mutex objectLockGPS_, objectLockLocal_, objectLockVel_, objectLockRC_, objectLockBat_, objectLockMode_, objectLockFS_, objectLockDJICS_;

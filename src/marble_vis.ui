@@ -34,384 +34,16 @@
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="0">
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="15" column="1">
-             <widget class="QCommandLinkButton" name="stopWP">
+            <item row="9" column="3">
+             <widget class="QLabel" name="label_6">
               <property name="maximumSize">
                <size>
-                <width>90</width>
+                <width>80</width>
                 <height>30</height>
                </size>
               </property>
               <property name="text">
-               <string>Stop</string>
-              </property>
-             </widget>
-            </item>
-            <item row="18" column="0" colspan="2">
-             <widget class="QLabel" name="label_14">
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Move Position GPS</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="3" colspan="2">
-             <widget class="QLabel" name="label_13">
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Config</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLineEdit" name="lineEdit_p2">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="4">
-             <widget class="QCheckBox" name="checkBox_addPoint">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Activated</string>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="3">
-             <widget class="QLabel" name="label_2">
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Lat:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="lineEdit_p1">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="maximumSize">
-               <size>
-                <width>70</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>UAV Pose</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_21">
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Lat:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_23">
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Alt:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3" colspan="2">
-             <widget class="QCheckBox" name="checkBox_clicked">
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Visualize Position Clicked</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QLabel" name="label_3">
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Lon:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="1" column="0">
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="4" column="4">
-             <widget class="QLineEdit" name="lineEdit_c1">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-              <property name="clearButtonEnabled">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_22">
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Lon:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QLineEdit" name="lineEdit_ngps">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="3">
-             <spacer name="verticalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Num GPS:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="center">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Center on</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="5" rowspan="21">
-             <layout class="QHBoxLayout" name="horizontalLayout"/>
-            </item>
-            <item row="1" column="3">
-             <spacer name="verticalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="5" column="4">
-             <widget class="QLineEdit" name="lineEdit_c2">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <widget class="QLabel" name="label">
-              <property name="maximumSize">
-               <size>
-                <width>60</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Clicked</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLineEdit" name="lineEdit_p3">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="17" column="3">
-             <spacer name="verticalSpacer_6">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="12" column="3">
-             <widget class="QLabel" name="label_7">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Altitude:</string>
+               <string>Type WP:</string>
               </property>
              </widget>
             </item>
@@ -428,152 +60,6 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="4">
-             <widget class="QLineEdit" name="lineEdit_type">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>waypoint</string>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="3">
-             <widget class="QLabel" name="label_6">
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Type WP:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="3">
-             <widget class="QLabel" name="label_9">
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Radius:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="14" column="3">
-             <widget class="QCheckBox" name="checkBox_clockwise">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Clockwise</string>
-              </property>
-             </widget>
-            </item>
-            <item row="16" column="4">
-             <widget class="QLineEdit" name="lineEdit_idleVel">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>1</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="4">
-             <widget class="QLineEdit" name="lineEdit_radius">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>10</string>
-              </property>
-             </widget>
-            </item>
-            <item row="21" column="0">
-             <spacer name="verticalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="21" column="3">
-             <spacer name="verticalSpacer_7">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Maximum</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>10</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="11" column="3">
-             <widget class="QCheckBox" name="checkBox_alt">
-              <property name="text">
-               <string>Altitude from UAV Pose</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0" colspan="2">
-             <widget class="QLabel" name="label_5">
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>List Waypoints</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="15" column="4">
-             <widget class="QLineEdit" name="lineEdit_maxVel">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>2</string>
-              </property>
-             </widget>
-            </item>
             <item row="16" column="3">
              <widget class="QLabel" name="label_11">
               <property name="maximumSize">
@@ -587,8 +73,8 @@
               </property>
              </widget>
             </item>
-            <item row="13" column="3">
-             <widget class="QLabel" name="label_12">
+            <item row="13" column="1">
+             <widget class="QPushButton" name="visualizeMission">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -596,12 +82,12 @@
                </size>
               </property>
               <property name="text">
-               <string>Yaw Mode:</string>
+               <string>Visualize</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="4">
-             <widget class="QLineEdit" name="lineEdit_alt">
+            <item row="14" column="0">
+             <widget class="QPushButton" name="cleanWP">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -609,20 +95,46 @@
                </size>
               </property>
               <property name="text">
-               <string>5</string>
+               <string>Clean</string>
               </property>
              </widget>
             </item>
-            <item row="13" column="4">
-             <widget class="QLineEdit" name="lineEdit_yawMode">
+            <item row="16" column="0">
+             <widget class="QCommandLinkButton" name="pauseWP">
               <property name="maximumSize">
                <size>
-                <width>100</width>
+                <width>90</width>
                 <height>30</height>
                </size>
               </property>
               <property name="text">
-               <string>1</string>
+               <string>Pause</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="1">
+             <widget class="QCommandLinkButton" name="sendWP">
+              <property name="maximumSize">
+               <size>
+                <width>90</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Send</string>
+              </property>
+             </widget>
+            </item>
+            <item row="19" column="0">
+             <widget class="QCommandLinkButton" name="moveGPS">
+              <property name="maximumSize">
+               <size>
+                <width>90</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Move</string>
               </property>
              </widget>
             </item>
@@ -642,8 +154,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>194</width>
-                 <height>129</height>
+                 <width>204</width>
+                 <height>132</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_6">
@@ -700,8 +212,532 @@
               </property>
              </widget>
             </item>
-            <item row="19" column="0">
-             <widget class="QCommandLinkButton" name="moveGPS">
+            <item row="13" column="4">
+             <widget class="QLineEdit" name="lineEdit_yawMode">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>1</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="4">
+             <widget class="QLineEdit" name="lineEdit_alt">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>5</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="3">
+             <widget class="QCheckBox" name="checkBox_alt">
+              <property name="text">
+               <string>Altitude from UAV Pose</string>
+              </property>
+             </widget>
+            </item>
+            <item row="22" column="0">
+             <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="22" column="3">
+             <spacer name="verticalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="14" column="3">
+             <widget class="QCheckBox" name="checkBox_clockwise">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Clockwise</string>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="4">
+             <widget class="QLineEdit" name="lineEdit_idleVel">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>1</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="4">
+             <widget class="QLineEdit" name="lineEdit_maxVel">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>2</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="5" rowspan="22">
+             <layout class="QHBoxLayout" name="horizontalLayout"/>
+            </item>
+            <item row="2" column="3">
+             <widget class="QLabel" name="label">
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Clicked</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QPushButton" name="center">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Center on</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0" colspan="2">
+             <widget class="QLabel" name="label_5">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>List Waypoints</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QLineEdit" name="lineEdit_p3">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="3">
+             <spacer name="verticalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="7" column="3">
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="12" column="3">
+             <widget class="QLabel" name="label_7">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Altitude:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="4">
+             <widget class="QLineEdit" name="lineEdit_radius">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>10</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="4">
+             <widget class="QCheckBox" name="checkBox_traceMode">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Smooth</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="3">
+             <widget class="QLabel" name="label_2">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Lat:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="4">
+             <widget class="QLineEdit" name="lineEdit_c1">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_23">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Alt:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="3" colspan="2">
+             <widget class="QLabel" name="label_13">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Config</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="lineEdit_p2">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="lineEdit_p1">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>UAV Pose</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Num GPS:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="4">
+             <widget class="QCheckBox" name="checkBox_addPoint">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Activated</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="3">
+             <widget class="QLabel" name="label_3">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Lon:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="3">
+             <widget class="QLabel" name="label_9">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Radius:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="6" column="1">
+             <widget class="QLineEdit" name="lineEdit_ngps">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_22">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Lon:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_21">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Lat:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="4">
+             <widget class="QLineEdit" name="lineEdit_c2">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="4">
+             <widget class="QLineEdit" name="lineEdit_type">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>waypoint</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3" colspan="2">
+             <widget class="QCheckBox" name="checkBox_clicked">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Visualize Position Clicked</string>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="0" colspan="2">
+             <widget class="QLabel" name="label_14">
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Move Position GPS</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="1">
+             <widget class="QCommandLinkButton" name="stopWP">
               <property name="maximumSize">
                <size>
                 <width>90</width>
@@ -709,7 +745,7 @@
                </size>
               </property>
               <property name="text">
-               <string>Move</string>
+               <string>Stop</string>
               </property>
              </widget>
             </item>
@@ -726,8 +762,24 @@
               </property>
              </widget>
             </item>
-            <item row="14" column="0">
-             <widget class="QPushButton" name="cleanWP">
+            <item row="1" column="0">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Maximum</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>10</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="13" column="3">
+             <widget class="QLabel" name="label_12">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -735,38 +787,25 @@
                </size>
               </property>
               <property name="text">
-               <string>Clean</string>
+               <string>Yaw Mode:</string>
               </property>
              </widget>
             </item>
-            <item row="16" column="0">
-             <widget class="QCommandLinkButton" name="pauseWP">
+            <item row="20" column="0" colspan="2">
+             <widget class="QLabel" name="label_15">
               <property name="maximumSize">
                <size>
-                <width>90</width>
+                <width>200</width>
                 <height>30</height>
                </size>
               </property>
               <property name="text">
-               <string>Pause</string>
+               <string>Move SLAM</string>
               </property>
              </widget>
             </item>
-            <item row="14" column="1">
-             <widget class="QCommandLinkButton" name="sendWP">
-              <property name="maximumSize">
-               <size>
-                <width>90</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Send</string>
-              </property>
-             </widget>
-            </item>
-            <item row="13" column="1">
-             <widget class="QPushButton" name="visualizeMission">
+            <item row="21" column="0">
+             <widget class="QCommandLinkButton" name="moveSLAM">
               <property name="maximumSize">
                <size>
                 <width>100</width>
@@ -774,11 +813,11 @@
                </size>
               </property>
               <property name="text">
-               <string>Visualize</string>
+               <string>Move</string>
               </property>
              </widget>
             </item>
-            <item row="18" column="3" rowspan="3" colspan="2">
+            <item row="18" column="3" rowspan="4" colspan="2">
              <widget class="QTextBrowser" name="textBrowser">
               <property name="maximumSize">
                <size>
@@ -798,19 +837,6 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2 -&amp;gt; by RC&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;3 -&amp;gt; WP yaw&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- Max Vel and Idle Vel can't be the same&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item row="14" column="4">
-             <widget class="QCheckBox" name="checkBox_traceMode">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Smooth</string>
               </property>
              </widget>
             </item>

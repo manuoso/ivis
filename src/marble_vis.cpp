@@ -55,6 +55,7 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         connect(ui->pauseWP, SIGNAL(clicked()), this, SLOT(pauseWaypointList()));
         connect(ui->resumeWP, SIGNAL(clicked()), this, SLOT(resumeWaypointList()));
         connect(ui->moveGPS, SIGNAL(clicked()), this, SLOT(sendMoveGPS()));
+        connect(ui->moveSLAM, SIGNAL(clicked()), this, SLOT(sendMoveSLAM()));
 
         connect(this, &MARBLE_vis::positionChanged , this, &MARBLE_vis::updatePose);
         connect(this, &MARBLE_vis::addPoint , this, &MARBLE_vis::addPointList);
@@ -79,6 +80,7 @@ MARBLE_vis::MARBLE_vis(QWidget *parent) :
         pauseMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/pause_mission");
         resumeMissionReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/resume_mission");
         positionGPSReq_ = nh.serviceClient<ivis::configMission>("/dji_control/go_position_gps");
+        SLAMReq_ = nh.serviceClient<std_srvs::SetBool>("/inspector/return_home");
 
         lostGPSSrv_ = nh.advertiseService("/missions_gui/lost_gps", &MARBLE_vis::lostGPSService, this);
 
@@ -504,6 +506,28 @@ void MARBLE_vis::sendMoveGPS(){
         }
     }else{
         std::cout << "Failed to call service of MOVE GPS" << std::endl;
+    }
+
+    ui->stopWP->setEnabled(true);
+    ui->pauseWP->setEnabled(true);
+    ui->resumeWP->setEnabled(true);
+
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void MARBLE_vis::sendMoveSLAM(){
+    
+    std_srvs::SetBool msgSLAM;
+    msgSLAM.request.data = true;
+    
+    if(SLAMReq_.call(msgSLAM)){
+        if(msgSLAM.response.success){
+            std::cout << "Service of MOVE SLAM success" << std::endl;
+        }else{
+            std::cout << "Service of MOVE SLAM failed" << std::endl;
+        }
+    }else{
+        std::cout << "Failed to call service of SLAM GPS" << std::endl;
     }
 
     ui->stopWP->setEnabled(true);

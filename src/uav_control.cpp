@@ -47,8 +47,8 @@ UAV_control::UAV_control(QWidget *parent) :
         connect(ui->stopVel, SIGNAL(clicked()), this, SLOT(stopVelocityUAV()));
         connect(ui->recCont, SIGNAL(clicked()), this, SLOT(recoverControlUAV()));
 
-        connect(ui->gotohome, SIGNAL(clicked()), this, SLOT(goToHomeUAV()));
-        connect(ui->stopgohome, SIGNAL(clicked()), this, SLOT(stopGoToHome()));
+        connect(ui->sendPwm, SIGNAL(clicked()), this, SLOT(sendPWM()));
+        connect(ui->stopPwm, SIGNAL(clicked()), this, SLOT(stopPWM()));
         
         connect(this, &UAV_control::telemChanged , this, &UAV_control::updateTelem);
 
@@ -57,7 +57,6 @@ UAV_control::UAV_control(QWidget *parent) :
         takeoffReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/takeoff");
         emergencyBrakeReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/emergency_brake");
         recoverControlReq_ = nh.serviceClient<std_srvs::SetBool>("/dji_control/recover_control");
-        lostGPSReq_ = nh.serviceClient<std_srvs::SetBool>("/missions_gui/lost_gps");
 
         velocityPub_ = nh.advertise<geometry_msgs::TwistStamped>("/dji_control/go_velocity", 1);
         positionPub_ = nh.advertise<geometry_msgs::PoseStamped>("/dji_control/go_position", 1); 
@@ -71,6 +70,8 @@ UAV_control::UAV_control(QWidget *parent) :
         flyStatusSub_ = nh.subscribe("/dji_telem/fly_status", 1, &UAV_control::CallbackFS, this);
         djiConStaSub_ = nh.subscribe("/dji_control/status", 1, &UAV_control::CallbackDJICS, this);
         
+        pwmPub_ = nh.advertise<std_msgs::UInt32MultiArray>("/dji_control/pwm_out", 1);
+
         lastTimePose_ = std::chrono::high_resolution_clock::now();
 
         telemThread_ = new std::thread([&]{
@@ -278,71 +279,33 @@ void UAV_control::recoverControlUAV(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void UAV_control::goToHomeUAV(){
+void UAV_control::sendPWM(){
 
-    lostGPS_ = true;
+    QString qPWM1 = ui->lineEdit_pwm1->text();
+    uint32_t pwm1 = qPWM1.toInt(); 
 
-    std_srvs::SetBool srv;
-    srv.request.data = lostGPS_;
-
-    if(lostGPSReq_.call(srv)){
-        if(srv.response.success){
-            std::cout << "Service of LOST GPS success" << std::endl;
-        }else{
-            std::cout << "Service of LOST GPS failed" << std::endl;
-        }
-    }else{
-        std::cout << "Failed to call service of LOST GPS" << std::endl;
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(200)); 
-
-    objectLockGPS_.lock();
-    ui->lineEdit_rg1->setText("LOST");
-    ui->lineEdit_rg2->setText("LOST");
-    ui->lineEdit_rg3->setText("LOST");
-    ui->lineEdit_ngps->setText("LOST");
-    ui->lineEdit_sig->setText("LOST");
-
-    homeX_ = 0.0;
-    homeY_ = 0.0;
-    homeZ_ = position_.z;
-    objectLockGPS_.unlock();
-
-    msgPosition_.header.stamp = ros::Time::now();
-    msgPosition_.pose.position.x = 0.0;
-    msgPosition_.pose.position.y = 0.0;
-    msgPosition_.pose.position.z = homeZ_;
-
-    type_ = "gotohome";
-    sendThread_ = new std::thread(&UAV_control::sendThread, this);
-
-    ui->gotohome->setVisible(0);
-    ui->stopgohome->setVisible(1);
+    QString qPWM2 = ui->lineEdit_pwm2->text();
+    uint32_t pwm2 = qPWM2.toInt(); 
+    
+    std_msgs::UInt32MultiArray msgPWM;
+    msgPWM.data.push_back(pwm1);
+    msgPWM.data.push_back(pwm2);
+    
+    pwmPub_.publish(msgPWM);
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void UAV_control::stopGoToHome(){
+void UAV_control::stopPWM(){
 
-    stopSend_ = true;
-    sendThread_->join();
-
-    std_srvs::SetBool srv;
-    srv.request.data = true;
-
-    if(emergencyBrakeReq_.call(srv)){
-        if(srv.response.success){
-            std::cout << "Service of EMERGENCY BRAKE success" << std::endl;
-        }else{
-            std::cout << "Service of EMERGENCY BRAKE failed" << std::endl;
-        }
-    }else{
-        std::cout << "Failed to call service of EMERGENCY BRAKE" << std::endl;
-    }
-
-    ui->gotohome->setVisible(1);
-    ui->stopgohome->setVisible(0);
+    uint32_t pwm1 = 1520; 
+    uint32_t pwm2 = 1520; 
+    
+    std_msgs::UInt32MultiArray msgPWM;
+    msgPWM.data.push_back(pwm1);
+    msgPWM.data.push_back(pwm2);
+    
+    pwmPub_.publish(msgPWM);
 
 }
 

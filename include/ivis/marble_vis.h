@@ -126,6 +126,9 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
 
         /// Method that send go to move with GPS through a service of ROS
         void sendMoveGPS();
+
+        /// Method that send go to home SLAM
+        void sendMoveSLAM();
     
     protected:
         /// Method to capture a key press on the keyboard
@@ -151,7 +154,7 @@ class MARBLE_vis : public QMainWindow, public LayerInterface{
         std::vector<Marble::GeoDataDocument*> documentMission_;
 
         ros::Subscriber poseSub_;
-        ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_, pauseMissionReq_, resumeMissionReq_, positionGPSReq_;
+        ros::ServiceClient configMissionReq_, startMissionReq_, stopMissionReq_, pauseMissionReq_, resumeMissionReq_, positionGPSReq_, SLAMReq_;
         ros::ServiceServer lostGPSSrv_;
 
         std::thread *poseThread_;

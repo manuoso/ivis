@@ -332,19 +332,6 @@
               </property>
              </widget>
             </item>
-            <item row="16" column="3">
-             <widget class="QCommandLinkButton" name="gotohome">
-              <property name="maximumSize">
-               <size>
-                <width>160</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>GO TO HOME</string>
-              </property>
-             </widget>
-            </item>
             <item row="18" column="5">
              <widget class="QLabel" name="label_20">
               <property name="maximumSize">
@@ -534,13 +521,6 @@
               </property>
               <property name="text">
                <string>Longitude:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="15" column="3">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Special Commands</string>
               </property>
              </widget>
             </item>
@@ -1006,16 +986,94 @@
               </property>
              </widget>
             </item>
-            <item row="17" column="3">
-             <widget class="QCommandLinkButton" name="stopgohome">
+            <item row="15" column="2">
+             <widget class="QLabel" name="label_5">
               <property name="maximumSize">
                <size>
-                <width>160</width>
+                <width>140</width>
                 <height>30</height>
                </size>
               </property>
               <property name="text">
-               <string>STOP GO HOME</string>
+               <string>Special Commands</string>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="2">
+             <widget class="QLabel" name="label_11">
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>PWM 1:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="2">
+             <widget class="QLabel" name="label_36">
+              <property name="maximumSize">
+               <size>
+                <width>70</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>PWM 2:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="16" column="3">
+             <widget class="QLineEdit" name="lineEdit_pwm1">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>1520</string>
+              </property>
+             </widget>
+            </item>
+            <item row="17" column="3">
+             <widget class="QLineEdit" name="lineEdit_pwm2">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>1520</string>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="2">
+             <widget class="QCommandLinkButton" name="sendPwm">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Start</string>
+              </property>
+             </widget>
+            </item>
+            <item row="18" column="3">
+             <widget class="QCommandLinkButton" name="stopPwm">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Stop</string>
               </property>
              </widget>
             </item>
