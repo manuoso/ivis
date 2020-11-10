@@ -359,7 +359,7 @@ void MARBLE_vis::sendWaypointList(){
     }
 
     QString qFinishAction = ui->lineEdit_faction->text();
-    int finishAction = qFinishAction..toInt();
+    int finishAction = qFinishAction.toInt();
     
     srvConfig.request.finishAction = finishAction;
     srvConfig.request.yawMode = yawMode;
@@ -482,15 +482,7 @@ void MARBLE_vis::sendMoveGPS(){
     QString qIdelVel = ui->lineEdit_idleVel->text();
     double idleVel = qIdelVel.toDouble(); 
 
-    int clockwiseMode = 0;
-    if(ui->checkBox_clockwise->isChecked()){
-        clockwiseMode = 1; 
-    }else{
-        clockwiseMode = 0;
-    }
-    
     srvConfig.request.yawMode = yawMode;
-    srvConfig.request.clockwiseMode = clockwiseMode;
     srvConfig.request.maxVel = maxVel;
     srvConfig.request.idleVel = idleVel;
     
