@@ -4,7 +4,7 @@ float64 radius
 float64 maxVel
 float64 idleVel
 int8 yawMode
-int8 clockwiseMode
 int8 traceMode
+int8 finishAction
 ---
 bool success

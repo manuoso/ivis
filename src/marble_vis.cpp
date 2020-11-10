@@ -150,14 +150,14 @@ bool MARBLE_vis::render(GeoPainter *painter, ViewportParams *viewport, const QSt
                 }
             }
 
-            GeoDataCoordinates initPoint(waypoints_[0].second[1], waypoints_[0].second[0], waypoints_[0].second[2], GeoDataCoordinates::Degree);
-            GeoDataCoordinates finalPoint(waypoints_[waypoints_.size()-1].second[1], waypoints_[waypoints_.size()-1].second[0], waypoints_[waypoints_.size()-1].second[2], GeoDataCoordinates::Degree);
+            // GeoDataCoordinates initPoint(waypoints_[0].second[1], waypoints_[0].second[0], waypoints_[0].second[2], GeoDataCoordinates::Degree);
+            // GeoDataCoordinates finalPoint(waypoints_[waypoints_.size()-1].second[1], waypoints_[waypoints_.size()-1].second[0], waypoints_[waypoints_.size()-1].second[2], GeoDataCoordinates::Degree);
             
-            GeoDataLineString lineNoTess(NoTessellation);
-            lineNoTess << finalPoint << initPoint;
+            // GeoDataLineString lineNoTess(NoTessellation);
+            // lineNoTess << finalPoint << initPoint;
 
-            // painter->setPen(oxygenForestGreen4);
-            painter->drawPolyline(lineNoTess);
+            // // painter->setPen(oxygenForestGreen4);
+            // painter->drawPolyline(lineNoTess);
 
         }else if(typeMission_ == "hotpoint"){
 
@@ -343,7 +343,7 @@ void MARBLE_vis::sendWaypointList(){
     srvConfig.request.radius = radiusHP_;
     
     QString qYawMode = ui->lineEdit_yawMode->text();
-    double yawMode = qYawMode.toInt(); 
+    int yawMode = qYawMode.toInt(); 
 
     QString qMaxVel = ui->lineEdit_maxVel->text();
     double maxVel = qMaxVel.toDouble(); 
@@ -351,22 +351,18 @@ void MARBLE_vis::sendWaypointList(){
     QString qIdelVel = ui->lineEdit_idleVel->text();
     double idleVel = qIdelVel.toDouble(); 
 
-    int clockwiseMode = 0;
-    if(ui->checkBox_clockwise->isChecked()){
-        clockwiseMode = 1; 
-    }else{
-        clockwiseMode = 0;
-    }
-
     int traceMode = 0;
     if(ui->checkBox_traceMode->isChecked()){
         traceMode = 1; 
     }else{
         traceMode = 0;
     }
+
+    QString qFinishAction = ui->lineEdit_faction->text();
+    int finishAction = qFinishAction..toInt();
     
+    srvConfig.request.finishAction = finishAction;
     srvConfig.request.yawMode = yawMode;
-    srvConfig.request.clockwiseMode = clockwiseMode;
     srvConfig.request.maxVel = maxVel;
     srvConfig.request.idleVel = idleVel;
     srvConfig.request.traceMode = traceMode;

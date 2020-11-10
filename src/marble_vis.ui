@@ -277,19 +277,6 @@
               </property>
              </spacer>
             </item>
-            <item row="14" column="3">
-             <widget class="QCheckBox" name="checkBox_clockwise">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Clockwise</string>
-              </property>
-             </widget>
-            </item>
             <item row="16" column="4">
              <widget class="QLineEdit" name="lineEdit_idleVel">
               <property name="maximumSize">
@@ -429,19 +416,6 @@
               </property>
               <property name="text">
                <string>10</string>
-              </property>
-             </widget>
-            </item>
-            <item row="14" column="4">
-             <widget class="QCheckBox" name="checkBox_traceMode">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Smooth</string>
               </property>
              </widget>
             </item>
@@ -837,6 +811,45 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2 -&amp;gt; by RC&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;3 -&amp;gt; WP yaw&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- Max Vel and Idle Vel can't be the same&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="4">
+             <widget class="QCheckBox" name="checkBox_traceMode">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Smooth</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="4">
+             <widget class="QLineEdit" name="lineEdit_faction">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>0</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="3">
+             <widget class="QLabel" name="label_16">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Finish Action:</string>
               </property>
              </widget>
             </item>
